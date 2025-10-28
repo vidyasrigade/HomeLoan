@@ -1,0 +1,114 @@
+﻿@model IEnumerable<HomeLoan.Models.Document>
+@{
+    ViewData["Title"] = "Documents for Application " + ViewBag.LoanId;
+}
+<div class="admin-panel panel-docs my-5 p-4 rounded-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="panel-title mb-0">Uploaded Documents - Application @ViewBag.LoanId</h4>
+        <a class="btn btn-secondary" href="/Admin/ApplicationDetails?id=@ViewBag.LoanId">Back to Application</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No documents uploaded for this application.</div>
+    }
+    else
+    {
+        <div class="table-panel p-3 rounded">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered mb-0 align-middle">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>File</th>
+                            <th>Uploaded On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var d in Model)
+                        {
+                            <tr>
+                                <td class="fw-semibold">@d.DocumentType</td>
+                                <td><a href="@d.FilePath" target="_blank" class="doc-link">@d.FileName</a></td>
+                                <td class="text-nowrap">@d.UploadedOn.ToString("dd MMM yyyy HH:mm")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    /* Panel wrapper */
+    .admin-panel.panel-docs {
+        background: linear-gradient(135deg, #e0e7ff 0%, #a8d1ff 40%, #004aad 100%);
+        border: 1px solid rgba(3,37,65,0.08);
+        box-shadow: 0 18px 48px rgba(2,6,23,0.10);
+        border-left: 6px solid #00509e; /* blue accent */
+        color: #102733;
+    }
+
+    .panel-title {
+        color: #0b3a66;
+        text-shadow: 0 4px 18px rgba(11,58,102,0.06);
+        font-weight: 600;
+    }
+
+    /* Table panel */
+    .table-panel {
+        background: #ffffff;
+        border-radius: 10px;
+        border: 1px solid rgba(3,37,65,0.06);
+        box-shadow: 0 12px 30px rgba(2,6,23,0.06);
+    }
+
+        .table-panel .table thead th {
+            background: linear-gradient(180deg,#f4f7fb,#eef4fb);
+            border-bottom: 2px solid rgba(3,37,65,0.06);
+            color: #0b3a66;
+            font-weight: 700;
+            text-shadow: 0 2px 6px rgba(11,58,102,0.03);
+        }
+
+        .table-panel .table tbody tr {
+            transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+            background: #fff;
+        }
+
+            .table-panel .table tbody tr:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 18px 40px rgba(2,6,23,0.06);
+                background: #fbfdff;
+            }
+
+    .doc-link {
+        color: #0a58ca;
+        font-weight: 600;
+        text-decoration: none;
+        text-shadow: 0 2px 8px rgba(10,88,202,0.04);
+    }
+
+        .doc-link:hover {
+            text-decoration: underline;
+            color: #003b8c;
+        }
+
+    /* small UX tweaks */
+    .table-panel td, .table-panel th {
+        vertical-align: middle;
+    }
+    @@media (max-width: 767.98px) {
+        .admin-panel.panel-docs
+
+    {
+        padding: 1rem;
+        border-left-width: 5px;
+    }
+
+    .table-panel {
+        padding: .5rem;
+    }
+
+    }</style>

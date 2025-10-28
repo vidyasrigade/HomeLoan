@@ -1,0 +1,247 @@
+﻿@{
+    ViewData["Title"] = "FAQ - HomeLoan";
+}
+
+<section class="faq-hero py-5">
+    <div class="container">
+        <div class="row align-items-center mb-4">
+            <div class="col-md-8">
+                <h1 class="display-6 fw-bold">Frequently Asked Questions</h1>
+                <p class="lead text-muted">Answers to common questions about home loans, eligibility, documents, and tracking.</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <div class="input-group search-faq">
+                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+                    <input id="faqSearch" class="form-control border-start-0" placeholder="Search FAQs (keywords)..." aria-label="Search FAQs">
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-lg-3">
+                <div class="card border-0 shadow-sm p-3">
+                    <h6 class="fw-semibold mb-3">Filter by category</h6>
+                    <ul class="list-unstyled faq-cats" id="faqCategories">
+                        <li><button class="btn btn-sm btn-outline-secondary w-100 mb-2 active" data-cat="all">All</button></li>
+                        <li><button class="btn btn-sm btn-outline-secondary w-100 mb-2" data-cat="accounts">Accounts & Application</button></li>
+                        <li><button class="btn btn-sm btn-outline-secondary w-100 mb-2" data-cat="eligibility">Eligibility</button></li>
+                        <li><button class="btn btn-sm btn-outline-secondary w-100 mb-2" data-cat="documents">Documents</button></li>
+                        <li><button class="btn btn-sm btn-outline-secondary w-100 mb-2" data-cat="emi">EMI & Repayment</button></li>
+                        <li><button class="btn btn-sm btn-outline-secondary w-100 mb-2" data-cat="tracker">Loan Tracker</button></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-lg-9">
+                <div id="faqList" class="accordion" role="tablist" aria-live="polite">
+
+                    <!-- FAQ item template: data-cat attributes used for filtering/search -->
+                    <div class="accordion-item mb-3" data-cat="accounts">
+                        <h2 class="accordion-header" id="faqHeading1">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1" aria-expanded="false" aria-controls="faq1">
+                                How do I start a new home loan application?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse" aria-labelledby="faqHeading1" data-bs-parent="#faqList">
+                            <div class="accordion-body">
+                                You can start by clicking <strong>Apply Now</strong> on the homepage or via the <em>Loan → Apply</em> menu. Register or login, fill out the application form and upload the required documents (PAN, Aadhaar, salary slips).
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item mb-3" data-cat="eligibility">
+                        <h2 class="accordion-header" id="faqHeading2">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2" aria-expanded="false" aria-controls="faq2">
+                                What is the eligibility criteria for a home loan?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" aria-labelledby="faqHeading2" data-bs-parent="#faqList">
+                            <div class="accordion-body">
+                                Eligibility depends on your income, credit history, age, and employment status. Use our <a href="/Home/Calculator">Calculator</a> for a quick estimate — typically banks allow 40% of net monthly income to be used for EMIs.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item mb-3" data-cat="documents">
+                        <h2 class="accordion-header" id="faqHeading3">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3" aria-expanded="false" aria-controls="faq3">
+                                What documents are required to apply?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" aria-labelledby="faqHeading3" data-bs-parent="#faqList">
+                            <div class="accordion-body">
+                                Primary documents: PAN, Aadhaar, Passport-size photo, Address proof, Latest 3 months' salary slips (or ITR if self-employed), bank statements, property documents. Specific requirements vary by lender.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item mb-3" data-cat="emi">
+                        <h2 class="accordion-header" id="faqHeading4">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4" aria-expanded="false" aria-controls="faq4">
+                                How is EMI calculated and can I prepay my loan?
+                            </button>
+                        </h2>
+                        <div id="faq4" class="accordion-collapse collapse" aria-labelledby="faqHeading4" data-bs-parent="#faqList">
+                            <div class="accordion-body">
+                                EMI is calculated using principal, interest rate and tenure. You can prepay part of the loan depending on your sanction terms; prepayment may reduce tenure or EMI. Check our <a asp-controller="Home" asp-action="Calculator">EMI Calculator</a> and contact support for prepayment details.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item mb-3" data-cat="tracker">
+                        <h2 class="accordion-header" id="faqHeading5">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5" aria-expanded="false" aria-controls="faq5">
+                                How do I track my application status?
+                            </button>
+                        </h2>
+                        <div id="faq5" class="accordion-collapse collapse" aria-labelledby="faqHeading5" data-bs-parent="#faqList">
+                            <div class="accordion-body">
+                                Use the <a asp-controller="LoanTracker" asp-action="Index">Loan Tracker</a> page and enter your application number and DOB to view the current status. If you face issues, contact support with your application ID.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add more items as needed, follow the same pattern (unique IDs, data-cat tags) -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<style>
+    /* FAQ section styles */
+    .faq-hero {
+        background: transparent;
+    }
+
+    .search-faq .input-group-text {
+        border-right: 0 !important;
+        border-radius: 8px 0 0 8px !important;
+        background: #fff;
+        border: none !important;
+        padding-right: 0.5rem;
+    }
+
+    .search-faq .form-control {
+        border-left: 4px solid transparent;
+        border-radius: 0 8px 8px 0;
+        margin-left: -1px; /* Ensures the border is flush with the icon */
+        transition: box-shadow 0.2s, border-color 0.2s;
+        z-index: 2;
+        position: relative;
+    }
+
+    .search-faq .form-control:focus {
+        border-left: 4px solid #0a1a3c !important; /* dark navy blue */
+        box-shadow: 0 0 8px rgba(10,26,60,0.25);
+        outline: none;
+    }
+
+    .faq-cats .btn {
+        text-align: left;
+        padding-left: 14px;
+        color: #334155;
+        transition: background 0.2s, color 0.2s;
+    }
+
+    .faq-cats .btn.active,
+    .faq-cats .btn:hover,
+    .faq-cats .btn:focus {
+        background: #0a1a3c !important; /* dark navy blue */
+        color: #fff !important;
+        border-color: transparent !important;
+    }
+
+    .accordion-button {
+        border-radius: .6rem;
+        background: #ffffff;
+        box-shadow: 0 6px 16px rgba(14,22,39,0.04);
+        color: #0f172a;
+        transition: background 0.2s, color 0.2s;
+    }
+
+    .accordion-button:hover,
+    .accordion-button:focus,
+    .accordion-button:not(.collapsed) {
+        background: #0a1a3c !important; /* dark navy blue */
+        color: #fff !important;
+    }
+
+    .accordion-item {
+        border: none;
+    }
+
+    .accordion-body {
+        color: #374151;
+        font-size: 0.98rem;
+        line-height: 1.5;
+    }
+
+    .emi-container .card-header,
+    .faq-hero .display-6 {
+        color: #0a3d91;
+    }
+    /* use site primary blue */
+    .result-box .btn {
+        border-radius: 999px;
+    }
+
+    /* Responsive tweaks */
+    
+
+    }
+</style>
+<script>
+    (function () {
+      const searchInput = document.getElementById('faqSearch');
+      const items = Array.from(document.querySelectorAll('#faqList .accordion-item'));
+      const catButtons = document.querySelectorAll('#faqCategories button');
+
+      // Category filter
+      catButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          catButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const cat = btn.dataset.cat;
+          filterItems(cat, searchInput.value.trim());
+        });
+      });
+
+      // Search filter (debounced)
+      let debounceTimer;
+      searchInput.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          const q = searchInput.value.trim();
+          const activeCatBtn = document.querySelector('#faqCategories button.active');
+          const cat = activeCatBtn ? activeCatBtn.dataset.cat : 'all';
+          filterItems(cat, q);
+        }, 250);
+      });
+
+      function filterItems(category, query) {
+        const q = (query || '').toLowerCase();
+        items.forEach(item => {
+          const itemCat = item.dataset.cat || 'all';
+          const title = item.querySelector('.accordion-button').innerText.toLowerCase();
+          const body = item.querySelector('.accordion-body').innerText.toLowerCase();
+          const matchCat = (category === 'all') || (itemCat === category);
+          const matchText = !q || title.includes(q) || body.includes(q);
+          if (matchCat && matchText) {
+            item.style.display = '';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      }
+
+      // Accessibility: allow Enter key to toggle accordion headers
+      document.querySelectorAll('.accordion-button').forEach(btn => {
+        btn.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            btn.click();
+          }
+        });
+      });
+    })();
+</script>

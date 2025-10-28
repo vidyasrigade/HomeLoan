@@ -1,0 +1,169 @@
+﻿@{
+    ViewData["Title"] = "Home Loan Calculators";
+}
+ 
+<div class="login-bg d-flex justify-content-center align-items-center" style="min-height: 100vh; padding-top: 0; padding-bottom: 0;">
+    <section class="calculator-section py-5 w-100">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h1 class="display-6 fw-bold text-primary">Home Loan Calculators</h1>
+                <p class="text-muted">Use our tools to estimate your EMI and check your loan eligibility easily.</p>
+            </div>
+ 
+            <div class="row justify-content-center g-4">
+                <!-- EMI Calculator -->
+                <div class="col-lg-5">
+                    <div class="card shadow p-4" style="border:1px solid #000;">
+                        <h4 class="text-primary mb-3 text-center">🏠 Home Loan EMI Calculator</h4>
+                        <form id="emiForm">
+                            <div class="mb-3">
+                                <label class="form-label form-label-shadow fw-semibold">Loan Amount (₹)</label>
+                                <input type="number" class="form-control input-shadow" id="loanAmount" placeholder="e.g. 5000000" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label form-label-shadow fw-semibold">Interest Rate (%)</label>
+                                <input type="number" step="0.1" class="form-control input-shadow" id="emiInterest" placeholder="e.g. 8.5" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label form-label-shadow fw-semibold">Tenure (Years)</label>
+                                <input type="number" class="form-control input-shadow" id="emiTenure" placeholder="e.g. 20" required>
+                            </div>
+                            <div class="text-center">
+                                <button type="button" class="btn btn-primary px-4 py-2 rounded-pill" id="calcEMI">Calculate EMI</button>
+                            </div>
+                        </form>
+ 
+                        <div class="result-box mt-4 text-center">
+                            <h6 class="fw-semibold text-success" id="emiResult"></h6>
+                        </div>
+                    </div>
+                </div>
+ 
+                <!-- Eligibility Calculator -->
+                <div class="col-lg-5">
+                    <div class="card shadow p-4" style="border:1px solid #000;">
+                        <h4 class="text-primary mb-3 text-center">💰 Eligibility Calculator</h4>
+                        <form id="eligibilityForm">
+                            <div class="mb-3">
+                                <label class="form-label form-label-shadow fw-semibold">Monthly Income (₹)</label>
+                                <input type="number" class="form-control input-shadow" id="monthlyIncome" placeholder="e.g. 60000" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label form-label-shadow fw-semibold">Monthly Obligations (₹)</label>
+                                <input type="number" class="form-control input-shadow" id="existingObligations" placeholder="e.g. 10000">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label form-label-shadow fw-semibold">Interest Rate (%)</label>
+                                <input type="number" step="0.1" class="form-control input-shadow" id="eligibilityRate" placeholder="e.g. 8.5" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label form-label-shadow fw-semibold">Loan Tenure (Years)</label>
+                                <input type="number" class="form-control input-shadow" id="eligibilityTenure" placeholder="e.g. 20" required>
+                            </div>
+                            <div class="text-center">
+                                <button type="button" class="btn btn-primary px-4 py-2 rounded-pill" id="calcEligibility">Check Eligibility</button>
+                            </div>
+                        </form>
+ 
+                        <div class="result-box mt-4 text-center">
+                            <h6 class="fw-semibold text-success" id="eligibilityResult"></h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+ 
+<style>
+    /* Reused login page styles: background, card look, inputs and label text-shadow */
+    .login-bg {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #e0e7ff 0%, #a8d1ff 40%, #004aad 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+    .card {
+        border-radius: 16px;
+        background: rgba(255,255,255,0.97);
+        box-shadow: 0 8px 32px rgba(10,26,60,0.12);
+        border: 1px solid #000;
+    }
+    .input-shadow {
+        box-shadow: 0 0 8px rgba(0,0,0,0.15);
+        border: 1px solid #ced4da;
+        outline: none;
+        transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .input-shadow:focus {
+        border-color: #004aad;
+        box-shadow: 0 0 12px rgba(0,74,173,0.25);
+        outline: 1px solid #004aad;
+    }
+    .form-label-shadow {
+        text-shadow: 0 1px 1px rgba(10,26,60,0.15);
+    }
+
+    /* preserve card spacing on smaller screens while keeping original form sizes */
+    .calculator-section .card { padding: 1.5rem; }
+</style>
+ 
+@section Scripts {
+    <script>
+        // EMI Calculator
+        document.getElementById('calcEMI').addEventListener('click', function () {
+            const principal = parseFloat(document.getElementById('loanAmount').value);
+            const annualRate = parseFloat(document.getElementById('emiInterest').value);
+            const tenureYears = parseFloat(document.getElementById('emiTenure').value);
+ 
+            if (isNaN(principal) || isNaN(annualRate) || isNaN(tenureYears) || principal <= 0) {
+                alert('Please fill all fields correctly.');
+                return;
+            }
+ 
+            const monthlyRate = annualRate / 12 / 100;
+            const months = tenureYears * 12;
+ 
+            const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / 
+                        (Math.pow(1 + monthlyRate, months) - 1);
+ 
+            const totalPayment = emi * months;
+            const totalInterest = totalPayment - principal;
+ 
+            document.getElementById('emiResult').innerHTML = `
+                Monthly EMI: <span class='fw-bold text-primary'>₹${emi.toFixed(0).toLocaleString('en-IN')}</span><br>
+                Total Interest: ₹${totalInterest.toFixed(0).toLocaleString('en-IN')}<br>
+                Total Payment: ₹${totalPayment.toFixed(0).toLocaleString('en-IN')}
+            `;
+        });
+ 
+        // Eligibility Calculator
+        document.getElementById('calcEligibility').addEventListener('click', function () {
+            const income = parseFloat(document.getElementById('monthlyIncome').value) || 0;
+            const obligations = parseFloat(document.getElementById('existingObligations').value) || 0;
+            const rate = parseFloat(document.getElementById('eligibilityRate').value) / 100 / 12;
+            const tenureYears = parseFloat(document.getElementById('eligibilityTenure').value);
+            const tenureMonths = tenureYears * 12;
+ 
+            if (income <= 0 || rate <= 0 || tenureYears <= 0) {
+                alert("Please fill all required fields properly.");
+                return;
+            }
+ 
+            const disposableIncome = income - obligations;
+            const eligibleEMI = disposableIncome * 0.4;
+ 
+            const loanAmount = (eligibleEMI * (Math.pow(1 + rate, tenureMonths) - 1)) / 
+                               (rate * Math.pow(1 + rate, tenureMonths));
+ 
+            document.getElementById('eligibilityResult').innerHTML = 
+                "You may be eligible for a loan amount of approximately <br><span class='fs-5 fw-bold text-primary'>₹" 
+                + loanAmount.toLocaleString('en-IN', {maximumFractionDigits: 0}) + "</span>";
+        });
+    </script>
+}

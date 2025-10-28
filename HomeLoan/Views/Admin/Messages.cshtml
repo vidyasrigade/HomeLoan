@@ -1,0 +1,133 @@
+﻿@model IEnumerable<HomeLoan.Models.ContactMessage>
+@{
+    ViewData["Title"] = "Customer Messages";
+}
+
+<div class="admin-panel panel-messages p-4 rounded-4 my-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="panel-title mb-0">Customer Messages</h3>
+        <a class="btn btn-secondary" href="/Admin/Dashboard">Back to Dashboard</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No messages yet.</div>
+    }
+    else
+    {
+        <div class="table-panel p-3 rounded">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="th-id">#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Message</th>
+                            <th class="th-date">Received</th>
+                            <th class="th-action"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var m in Model)
+                        {
+                            <tr>
+                                <td class="fw-semibold">@m.Id</td>
+                                <td>@m.Name</td>
+                                <td>@m.Email</td>
+                                <td style="max-width:480px; white-space:pre-wrap;">@m.Message</td>
+                                <td>@m.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                                <td>
+                                    <a class="btn btn-sm btn-outline-primary" href="mailto:@m.Email" title="Email user">Email</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    /* Panel container */
+    .admin-panel.panel-messages {
+        background: linear-gradient(135deg, #e0e7ff 0%, #a8d1ff 40%, #004aad 100%);
+        border: 1px solid rgba(3,37,65,0.08);
+        box-shadow: 0 18px 48px rgba(2,6,23,0.10);
+        border-left: 6px solid #ff8c00; /* amber accent */
+        padding: 1.25rem;
+    }
+
+    .panel-title {
+        color: #0b3a66;
+        text-shadow: 0 4px 18px rgba(11,58,102,0.08);
+    }
+
+    /* White table panel that stands out on page */
+    .table-panel {
+        background: #ffffff;
+        border-radius: 10px;
+        border: 1px solid rgba(3,37,65,0.06);
+        box-shadow: 0 12px 30px rgba(2,6,23,0.06);
+    }
+
+        .table-panel .table thead th {
+            background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+            border-bottom: 2px solid rgba(3,37,65,0.06);
+            color: #0b3a66;
+            font-weight: 600;
+            text-shadow: 0 2px 6px rgba(11,58,102,0.03);
+        }
+
+        .table-panel .table tbody tr {
+            transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+        }
+
+            .table-panel .table tbody tr:hover {
+                background: #ffffff;
+                transform: translateY(-4px);
+                box-shadow: 0 14px 40px rgba(2,6,23,0.06);
+            }
+
+        /* Make message cell more readable */
+        .table-panel td {
+            vertical-align: middle;
+            color: #203547;
+        }
+
+            .table-panel td small,
+            .table-panel .small {
+                color: #6b7a86;
+            }
+
+    /* accent and stronger border for ID and date columns */
+    .th-id, .th-date {
+        width: 1%;
+        white-space: nowrap;
+    }
+
+    /* action column */
+    .th-action {
+        width: 1%;
+        white-space: nowrap;
+    }
+
+    /* responsive tweaks */
+    @@media (max-width: 767.98px) {
+        .admin-panel.panel-messages
+
+    {
+        padding: .75rem;
+        border-left-width: 5px;
+    }
+
+    .table-panel {
+        padding: .5rem;
+    }
+
+        .table-panel .table thead th {
+            font-size: .9rem;
+        }
+
+    }</style>

@@ -1,0 +1,922 @@
+﻿@model IEnumerable<HomeLoan.Models.LoanApplication>
+
+@using System.Globalization
+
+@using System.Linq
+
+@using System.Text.Json
+
+@{
+
+    ViewData["Title"] = "Admin Dashboard";
+
+    // Prefer server-supplied ViewBag counts (fallbacks safe)
+
+    var appsCount = (int?)(ViewBag.TotalApplications) ?? (Model?.Count() ?? 0);
+
+    var usersCount = (int?)(ViewBag.UsersCount) ?? 0;
+
+    var msgsCount = (int?)(ViewBag.MessagesCount) ?? 0;
+
+    var revenue = (decimal?)(ViewBag.Revenue) ?? (Model?.Sum(a => a.LoanAmount) ?? 0m);
+
+    var currentYear = DateTime.UtcNow.Year;
+
+    var startOfYear = new DateTime(currentYear, 1, 1);
+
+    var today = DateTime.UtcNow.Date;
+
+    var months = Enumerable.Range(1, 12)
+
+        .Select(i => CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(i))
+
+        .ToArray();
+
+    var monthlyLoanSums = Enumerable.Range(1, 12)
+
+        .Select(m => Model == null
+
+            ? 0m
+
+            : Model.Where(a => a.AppliedOn.ToLocalTime().Year == currentYear && a.AppliedOn.ToLocalTime().Month == m)
+
+                   .Sum(a => (decimal?)a.LoanAmount) ?? 0m)
+
+        .Select(d => decimal.ToDouble(d))
+
+        .ToArray();
+
+    var approvedCount = Model == null ? 0 : Model.Count(a => string.Equals(a.Status ?? "", "Approved", StringComparison.OrdinalIgnoreCase));
+
+    var rejectedCount = Model == null ? 0 : Model.Count(a => string.Equals(a.Status ?? "", "Rejected", StringComparison.OrdinalIgnoreCase));
+
+    var pendingCountVal = Model == null ? 0 : Model.Count(a => !string.Equals(a.Status ?? "", "Approved", StringComparison.OrdinalIgnoreCase) && !string.Equals(a.Status ?? "", "Rejected", StringComparison.OrdinalIgnoreCase));
+
+}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+    body, html {
+        font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+
+    /* preserve background gradient */
+
+    .admin-bg {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #e0e7ff 0%, #a8d1ff 40%, #004aad 100%);
+        padding: 32px 0 80px;
+    }
+
+    /* Layout: left sidebar + main area */
+
+    .dashboard-layout {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+        /* keep the layout height to the viewport minus navbar + gap so we don't scroll the body */
+
+        height: calc(100vh - var(--nav-height) - var(--nav-gap));
+        overflow: hidden; /* prevent outer page scroll; main area will scroll */
+    }
+
+    :root {
+        --sidebar-width: 220px;
+        --nav-height: 64px; /* navbar height — used so sidebar starts below navbar */
+
+        --nav-gap: 12px;
+    }
+
+    /* Sidebar */
+
+    .admin-sidebar {
+        width: var(--sidebar-width);
+        /* reduce height slightly so it fits under navbar and gap */
+
+        height: calc(100vh - var(--nav-height) - var(--nav-gap));
+        position: fixed;
+        top: calc(var(--nav-height) + var(--nav-gap));
+        left: 0;
+        background: rgba(12,18,28,0.92);
+        color: #fff;
+        padding: 1rem;
+        box-shadow: 2px 0px 10px rgba(0,0,0,0.2);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 1050; /* high so it stays above footer/content */
+
+        transition: transform 0.3s ease;
+        overflow-y: auto; /* allow wheel/touch scrolling */
+
+        -ms-overflow-style: none; /* hide scrollbar in IE/Edge */
+
+        scrollbar-width: none; /* hide scrollbar in Firefox */
+    }
+
+        /* hide WebKit scrollbars but preserve scrolling */
+
+        .admin-sidebar::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
+
+        .admin-sidebar .brand {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+            .admin-sidebar .brand .logo {
+                width: 44px;
+                height: 44px;
+                border-radius: 8px;
+                background: #fff;
+                color: #1e3c72;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                font-size: 1.2rem;
+            }
+
+        .admin-sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .admin-sidebar a.nav-link {
+            color: #f0f0f0;
+            text-decoration: none;
+            padding: .75rem 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: .8rem;
+            font-weight: 500;
+            transistion: all 0.3s ease;
+        }
+
+            .admin-sidebar a.nav-link i {
+                min-width: 18px;
+                text-align: center;
+            }
+
+            .admin-sidebar a.nav-link:hover
+
+            .admin-sidebar a.nav-link.active {
+                background: rgba(255,255,255,0.03);
+                color: #fff;
+                transform: translateX(4px);
+            }
+
+        .admin-sidebar .section-title {
+            font-size: .85rem;
+            color: #9fb3bf;
+            margin-top: .6rem;
+            margin-bottom: .25rem;
+            font-weight: 600;
+        }
+
+    /* Main content takes remaining */
+
+    .admin-main {
+        flex: 1;
+        margin-left: var(--sidebar-width);
+        padding: 2rem;
+        transition: margin-left 0.3s ease;
+        min-width: 0;
+        height: 100%;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
+
+        padding-bottom: 24px; /* prevents last content from hugging the footer */
+
+        box-sizing: border-box;
+    }
+
+    /* Collapsed state when toggled from navbar */
+
+    .sidebar-collapsed .admin-sidebar {
+        transform: translateX(calc(-1 * var(--sidebar-width)));
+    }
+
+    .sidebar-collapsed .admin-main {
+        margin-left: 0;
+        padding-left: 1rem; /* small padding when sidebar hidden */
+    }
+
+    .sidebar-collapsed .admin-sidebar,
+    .sidebar-collapsed .admin-main {
+        transition: transform 0.3s ease, margin-left 0.3s ease;
+    }
+
+    /* Keep previous styles for topbar, KPI, charts, table etc. (unchanged) */
+
+    .topbar {
+        background: rgba(12,18,28,0.9);
+        padding: 1px 10px;
+        color: #fff;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+
+
+    .search-input {
+        width: 260px;
+        min-width: 160px;
+    }
+
+    .date-range {
+        width: 220px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        algn-items: center;
+    }
+
+    .kpi-row {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        align-items: stretch;
+    }
+
+    .kpi {
+        flex: 1 1 220px;
+        border-radius: var(--card-radius);
+        padding: 14px;
+        color: #fff;
+        box-shadow: var(--soft-shadow);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: relative;
+        overflow: hidden;
+        text-decoration: none;
+        transition: transform .16s ease, box-shadow .16s ease;
+    }
+
+        .kpi:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 22px 44px rgba(2,6,23,0.22);
+        }
+
+        .kpi .icon {
+            font-size: 1.8rem;
+            opacity: .95;
+        }
+
+        .kpi .meta {
+            opacity: .9;
+            font-weight: 600;
+        }
+
+        .kpi .value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-top: 6px;
+        }
+
+    .kpi-apps {
+        background: linear-gradient(135deg,#007bff,#00509e);
+    }
+
+    .kpi-users {
+        background: linear-gradient(135deg,#28a745,#1f7a3a);
+    }
+
+    .kpi-msgs {
+        background: linear-gradient(135deg,#ff6b6b,#c82333);
+    }
+
+    .kpi-rev {
+        background: linear-gradient(135deg,#ffb74d,#ff8a65);
+        color: #111;
+    }
+
+    .kpi .decor {
+        position: absolute;
+        right: 8px;
+        bottom: 8px;
+        opacity: .12;
+        font-size: 5.4rem;
+        line-height: 1;
+        pointer-events: none;
+    }
+
+    .filter-bar {
+        display: flex;
+        gap: .5rem;
+        align-items: center;
+        margin: 12px 0 18px;
+        flex-wrap: wrap;
+    }
+
+    .filter-pill {
+        background: rgba(255,255,255,0.06);
+        color: #eff8ff;
+        padding: .45rem .6rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.03);
+        cursor: pointer;
+        transition: transform .12s ease, background .12s ease;
+    }
+
+        .filter-pill:hover {
+            transform: translateY(-3px);
+            background: rgba(255,255,255,0.09);
+        }
+
+        .filter-pill.active {
+            background: #0d6efd;
+            color: #fff;
+            box-shadow: 0 10px 30px rgba(13,110,253,0.12);
+        }
+
+
+
+    .chart-card {
+        border-radius: var(--card-radius);
+        box-shadow: var(--soft-shadow);
+        overflow: hidden;
+        background: rgba(255,255,255,0.02);
+    }
+
+        .chart-card .card-body {
+            padding: 1rem;
+        }
+
+    .table-panel {
+        background: #fff;
+        border-radius: var(--card-radius);
+        box-shadow: 0 10px 30px rgba(2,6,23,0.06);
+        padding: 1rem;
+    }
+
+        .table-panel .table thead th {
+            background: #f5f7fb;
+            font-weight: 600;
+        }
+
+        .table-panel .table tbody tr:hover {
+            background: #fbfdff;
+        }
+
+    .btn-export {
+        background: #fff;
+        border: 1px solid rgba(0,0,0,0.06);
+        color: #333;
+    }
+
+        .btn-export:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(2,6,23,0.06);
+        }
+
+    /* responsive: hide sidebar on small screens */
+
+    @@media (max-width: 991.98px) {
+
+        .admin-sidebar {
+            display: none;
+        }
+
+        .dashboard-layout {
+            padding: 0 12px;
+        }
+
+        .search-input {
+            width: 140px;
+        }
+
+        .date-range {
+            display: none;
+        }
+
+        .kpi-row {
+            flex-direction: column;
+        }
+    }
+
+    /* make dashboard-layout a positioned container so sidebar can become absolute when needed */
+
+    .dashboard-layout {
+        position: relative;
+    }
+
+    /* hide visible scrollbar but keep scroll behavior */
+
+    /* Firefox */
+
+    .admin-main {
+        scrollbar-width: none; /* hide for Firefox */
+
+        -ms-overflow-style: none; /* hide for IE/Edge Legacy */
+    }
+
+        /* WebKit (Chrome, Safari, Edge Chromium) */
+
+        .admin-main::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
+
+    }</style>
+
+<div class="admin-bg">
+    <div class="container">
+        <div class="dashboard-layout">
+            <!-- LEFT SIDEBAR (new) -->
+            <aside class="admin-sidebar" aria-label="Admin navigation">
+                <div class="brand">
+                    <div class="logo">HL</div>
+                    <div>
+                        <div style="font-weight:700">HomeLoan</div>
+                        <div style="font-size:.78rem;color:#9fb3bf">Admin Console</div>
+                    </div>
+                </div>
+
+                <nav>
+                    <a class="nav-link" href="/Admin/Dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    <a class="nav-link" href="/Admin/Applications"><i class="bi bi-journal-check"></i> Applications</a>
+                    <a class="nav-link" href="/Admin/Users"><i class="bi bi-people"></i> Users</a>
+                    <a class="nav-link" href="/Admin/Messages"><i class="bi bi-chat-dots"></i> Messages</a>
+
+                    <div class="section-title">Account</div>
+
+                    <a class="nav-link text-danger" href="/Account/Logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
+                </nav>
+            </aside>
+
+            <!-- MAIN CONTENT (keeps original structure) -->
+            <main class="admin-main">
+                <div class="topbar">
+
+                    <div class="brand">
+
+                        <div class="title">HomeLoan Admin</div>
+                        <div style="font-size:.82rem;color:#bcd7ef">Operations console</div>
+
+                    </div>
+
+                    <div class="controls">
+                        <input id="tableSearch" class="form-control form-control-sm search-input" placeholder="Search applications, property, name" />
+                        <div class="date-range">
+                            <input id="startDate" type="date" class="form-control form-control-sm" value="@startOfYear.ToString("yyyy-MM-dd")" />
+                            <input id="endDate" type="date" class="form-control form-control-sm" value="@today.ToString("yyyy-MM-dd")" />
+                        </div>
+                        <a id="exportCsv" href="/Admin/ExportCsv" class="btn btn-sm btn-export"><i class="bi bi-download me-1"></i> Export CSV</a>
+                    </div>
+                </div>
+
+                <!-- KPI row -->
+                <div class="kpi-row mb-3">
+                    <a href="/Admin/Applications" class="kpi kpi-apps" title="View applications">
+                        <div class="icon"><i class="bi bi-journal-check"></i></div>
+                        <div>
+                            <div class="meta">Total Applications</div>
+                            <div class="value"><span id="kpiAppsCount">@appsCount</span></div>
+                            <div style="font-size:.82rem;opacity:.85">All time</div>
+                        </div>
+                        <div class="decor">📄</div>
+                    </a>
+
+                    <a href="/Admin/Users" class="kpi kpi-users" title="View users">
+                        <div class="icon"><i class="bi bi-people-fill"></i></div>
+                        <div>
+                            <div class="meta">Registered Users</div>
+                            <div class="value"><span id="kpiUsersCount">@usersCount</span></div>
+                            <div style="font-size:.82rem;opacity:.85">Active customers</div>
+                        </div>
+                        <div class="decor">👥</div>
+                    </a>
+
+                    <a href="/Admin/Messages" class="kpi kpi-msgs" title="View messages">
+                        <div class="icon"><i class="bi bi-chat-dots-fill"></i></div>
+                        <div>
+                            <div class="meta">Messages</div>
+                            <div class="value"><span id="kpiMsgsCount">@msgsCount</span></div>
+                            <div style="font-size:.82rem;opacity:.85">Customer requests</div>
+                        </div>
+                        <div class="decor">💬</div>
+                    </a>
+
+                    <div class="kpi kpi-rev" title="Loan book">
+                        <div class="icon"><i class="bi bi-currency-rupee"></i></div>
+                        <div>
+                            <div class="meta">Loan Book (₹)</div>
+                            <div class="value">₹<span id="kpiRevenue">@revenue.ToString("N0")</span></div>
+                            <div style="font-size:.82rem;opacity:.85">Sum of loan amounts</div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- Filters -->
+                <div class="filter-bar">
+
+                    <button class="filter-pill" data-filter-status="Approved" style="color:black">Approved <span class="badge  text-dark ms-2" style="background:green">@approvedCount</span></button>
+                    <button class="filter-pill" data-filter-status="Rejected" style="color:black">Rejected <span class="badge  text-dark ms-2" style="background:red">@rejectedCount</span></button>
+                    <button class="filter-pill" data-filter-status="Pending" style="color:black">Pending <span class="badge  text-dark ms-2" style="background:yellow">@pendingCountVal</span></button>
+                    <div class="ms-auto text-muted small">Click chart bars or slices to filter below</div>
+                </div>
+
+                <!-- Charts -->
+                <div class="row g-4 mb-4" style="background-color:white; padding=2px">
+                    <div class="col-md-8">
+                        <div class="chart-card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">Monthly Loan Summary — @currentYear</h5>
+                                <div class="chart-wrapper">
+                                    <canvas id="monthlyLoanChart"></canvas>
+                                </div>
+                                <small class="text-muted mt-2">Click a bar to highlight applications for that month</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="chart-card">
+                            <div class="card-body d-flex flex-column align-items-center">
+                                <h5 class="card-title mb-3">Status Distribution</h5>
+                                <div class="chart-wrapper" style="width:100%;max-width:320px">
+                                    <canvas id="statusDistributionChart"></canvas>
+                                </div>
+                                <small class="text-muted mt-2">Click a slice to filter table</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent applications -->
+                <h5 class="mb-3 text-black"><b>Recent Applications</b></h5>
+
+                <div class="table-panel">
+                    <div class="table-responsive">
+                        <table id="appsTable" class="table table-hover mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Property</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Applied</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @if (Model != null && Model.Any())
+
+                                {
+
+                                    foreach (var a in Model.OrderByDescending(x => x.AppliedOn).Take(200))
+
+                                    {
+
+                                        var local = a.AppliedOn.ToLocalTime();
+
+                                        var statusSafe = a.Status ?? "";
+                                        <tr data-month="@local.Month" data-status="@statusSafe.ToLowerInvariant()" data-name="@((a.FirstName + " " + a.LastName).ToLowerInvariant())" data-property="@((a.PropertyName ?? "").ToLowerInvariant())">
+                                            <td>@a.Id</td>
+                                            <td>@a.FirstName @a.LastName</td>
+                                            <td>@a.PropertyName</td>
+                                            <td>₹@a.LoanAmount.ToString("N0")</td>
+                                            <td><span class="status-badge @(a.Status == "Approved" ? "approved" : a.Status == "Rejected" ? "rejected" : "pending")">@a.Status</span></td>
+                                            <td>@local.ToString("yyyy-MM-dd")</td>
+                                            <td><a class="btn btn-sm btn-outline-primary" href="/Admin/ApplicationDetails?id=@a.Id">Open</a></td>
+                                        </tr>
+
+                                    }
+
+                                }
+
+                                else
+
+                                {
+                                    <tr><td colspan="7" class="text-center text-muted">No applications found.</td></tr>
+
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+
+<!-- Modal placeholder -->
+<div id="cpModal" class="cp-modal" role="dialog" aria-hidden="true" style="display:none">
+    <div class="panel">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 id="cpModalTitle">Details</h5>
+            <button id="cpModalClose" class="btn btn-sm btn-outline-secondary">Close</button>
+        </div>
+        <div id="cpModalBody"></div>
+    </div>
+</div>
+
+@* one-time welcome modal for admin *@
+
+@if (TempData["ShowWelcome"] != null)
+
+{
+
+    var msg = TempData["WelcomeMessage"]?.ToString() ?? "Welcome, Admin!";
+    <div class="modal fade" id="adminWelcomeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center p-4">
+                    <h5 class="mb-2">@msg</h5>
+                    <p class="mb-0">Welcome to the Admin Console.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            try {
+
+                var m = new bootstrap.Modal(document.getElementById('adminWelcomeModal'));
+
+                m.show();
+
+            } catch (e) { console && console.warn && console.warn(e); }
+
+        });
+    </script>
+
+}
+
+<script>
+
+    (function () {
+
+        // expose server data to window
+
+        window.months = @Html.Raw(JsonSerializer.Serialize(months));
+
+        window.monthlySums = @Html.Raw(JsonSerializer.Serialize(monthlyLoanSums));
+
+        window.approvedVal = @Html.Raw(JsonSerializer.Serialize(approvedCount));
+
+        window.rejectedVal = @Html.Raw(JsonSerializer.Serialize(rejectedCount));
+
+        window.pendingVal = @Html.Raw(JsonSerializer.Serialize(pendingCountVal));
+
+        const qs = (s, r = document) => r.querySelector(s);
+
+        const qsa = (s, r = document) => Array.from((r || document).querySelectorAll(s));
+
+        // initialize charts
+
+        function initCharts() {
+
+            if (typeof Chart === 'undefined') { console.error('Chart.js missing'); return; }
+
+            try { if (window.monthlyLoanChartInstance) window.monthlyLoanChartInstance.destroy(); } catch {}
+
+            try { if (window.statusDistributionChartInstance) window.statusDistributionChartInstance.destroy(); } catch {}
+
+            const ctxM = qs('#monthlyLoanChart');
+
+            if (ctxM) {
+
+                window.monthlyLoanChartInstance = new Chart(ctxM, {
+
+                    type: 'bar',
+
+                    data: { labels: window.months || [], datasets: [{ data: window.monthlySums || [], backgroundColor:'rgba(54,162,235,0.95)', borderRadius:6 }] },
+
+                    options: {
+
+                        plugins:{ legend:{ display:false } },
+
+                        onClick: (evt, elems) => {
+
+                            if (!elems.length) return;
+
+                            const month = elems[0].index + 1;
+
+                            qsa('#appsTable tbody tr').forEach(r => r.classList.toggle('table-highlight', Number(r.dataset.month) === month));
+
+                        },
+
+                        maintainAspectRatio:false
+
+                    }
+
+                });
+
+            }
+
+            const ctxS = qs('#statusDistributionChart');
+
+            if (ctxS) {
+
+                window.statusDistributionChartInstance = new Chart(ctxS, {
+
+                    type: 'doughnut',
+
+                    data: { labels:['Approved','Rejected','Pending'], datasets:[{ data:[window.approvedVal||0, window.rejectedVal||0, window.pendingVal||0], backgroundColor:['#28a745','#dc3545','#ffc107'] }] },
+
+                    options: { plugins:{ legend:{ position:'bottom' } }, maintainAspectRatio:false }
+
+                });
+
+            }
+
+        }
+
+
+        // counts polling (updates KPIs)
+
+        const COUNTS_URL = '/Admin/Counts';
+
+        const POLL_INTERVAL = 15000;
+
+        async function fetchCounts() {
+
+            try {
+
+                const res = await fetch(COUNTS_URL, { cache:'no-store', credentials:'same-origin' });
+
+                if (res.status === 401) { window.location.href = '/Admin/Login'; return; }
+
+                if (!res.ok) return;
+
+                const d = await res.json();
+
+                if (d.totalApplications !== undefined) updateKpi('#kpiAppsCount', d.totalApplications);
+
+                if (d.usersCount !== undefined) updateKpi('#kpiUsersCount', d.usersCount);
+
+                if (d.messagesCount !== undefined) updateKpi('#kpiMsgsCount', d.messagesCount);
+
+                if (d.revenue !== undefined) updateKpi('#kpiRevenue', Number(d.revenue).toLocaleString('en-IN'));
+
+            } catch (e) { console.error('Counts fetch error', e); }
+
+        }
+
+        function updateKpi(selector, value) {
+
+            const el = qs(selector);
+
+            if (!el) return;
+
+            const current = el.textContent.trim();
+
+            if (current !== String(value)) {
+
+                el.style.transition = 'transform .18s ease';
+
+                el.style.transform = 'scale(1.06)';
+
+                setTimeout(()=> el.style.transform = '', 180);
+
+                el.textContent = value;
+
+            }
+
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            initCharts();
+
+            fetchCounts();
+
+            setInterval(fetchCounts, POLL_INTERVAL);
+
+        });
+
+    })();
+</script>
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const layout = document.querySelector('.dashboard-layout');
+
+        const sidebar = document.querySelector('.admin-sidebar');
+
+        const main = document.querySelector('.admin-main');
+
+        const footer = document.querySelector('footer');
+
+        if (!layout || !sidebar || !main || !footer) return;
+
+        // Ensure layout is positioned so absolute sidebar will be relative to it
+
+        if (getComputedStyle(layout).position === 'static') {
+
+            layout.style.position = 'relative';
+
+        }
+
+        // Preserve computed width during mode switch to avoid layout jumps
+
+        function preserveWidth() {
+
+            return getComputedStyle(sidebar).width;
+
+        }
+
+        // When main is scrolled to bottom -> pin sidebar inside layout (absolute bottom)
+
+        // Otherwise return sidebar to fixed position below navbar.
+
+        function updateSidebarMode() {
+
+            const atBottom = main.scrollTop + main.clientHeight >= main.scrollHeight - 2; // 2px tolerance
+
+            if (atBottom) {
+
+                if (!sidebar.classList.contains('stop')) {
+
+                    sidebar.classList.add('stop');
+
+                    sidebar.style.width = preserveWidth();
+
+                    // set CSS explicit values used by .stop class
+
+                    sidebar.style.position = 'absolute';
+
+                    sidebar.style.top = 'auto';
+
+                    sidebar.style.bottom = '0';
+
+                    sidebar.style.left = '0';
+
+                }
+
+            } else {
+
+                if (sidebar.classList.contains('stop')) {
+
+                    sidebar.classList.remove('stop');
+
+                    // restore fixed positioning used initially
+
+                    sidebar.style.position = 'fixed';
+
+                    sidebar.style.top = `calc(var(--nav-height) + var(--nav-gap))`;
+
+                    sidebar.style.bottom = '';
+
+                    sidebar.style.left = '0';
+
+                    sidebar.style.width = '';
+
+                }
+
+            }
+
+        }
+
+        // Hooks: internal scroll on main, window resize and page scroll (container may move)
+
+        main.addEventListener('scroll', updateSidebarMode, { passive: true });
+
+        window.addEventListener('resize', () => { setSidebarLeft(); updateSidebarMode(); });
+
+        window.addEventListener('scroll', setSidebarLeft, { passive: true });
+
+        // Run initial check (after slight delay to let fonts/images settle)
+
+        setSidebarLeft();
+
+        updateSidebarMode();
+
+        setTimeout(() => { setSidebarLeft(); updateSidebarMode(); }, 200);
+
+    });
+</script>

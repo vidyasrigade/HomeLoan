@@ -1,0 +1,70 @@
+﻿@{
+    ViewData["Title"] = "Admin Login";
+}
+
+<div class="admin-login-wrapper">
+    <div class="login-card shadow-lg">
+        <div class="text-center mb-4">
+            <img <img src=" ~ /images/homeloan.jpg" alt="HomeLoan Logo" style="height:60px;" />
+            <h3 class="text-primary mt-2">HomeLoan Admin Portal</h3>
+        </div>
+
+        <form asp-action="Login" method="post">
+            <div class="mb-3">
+                <label class="form-label">Admin Username</label>
+                <input type="text" name="username" class="form-control" placeholder="Enter Username" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" placeholder="Enter Password" required />
+            </div>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger text-center py-2">@ViewBag.Error</div>
+            }
+
+            <div class="text-center mt-4">
+                <button class="btn btn-primary w-100 py-2">Login</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    body, html {
+        height: 100%;
+        margin: 0;
+    }
+
+    .admin-login-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background: linear-gradient(135deg, #004aad 0%, #001f54 100%);
+    }
+
+    .login-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        width: 400px;
+        padding: 2rem 2.5rem;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        animation: fadeIn 0.8s ease;
+    }
+
+
+    .btn-primary {
+        background-color: #004aad;
+        border-color: #004aad;
+    }
+
+        .btn-primary:hover {
+            background-color: #003b8c;
+        }
+
+    .text-primary {
+        color: #004aad !important;
+    }
+</style>

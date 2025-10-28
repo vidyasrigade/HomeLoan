@@ -1,0 +1,699 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    var isLoggedIn = HttpContextAccessor.HttpContext?.Session.GetInt32("UserId") != null;
+    var isAdmin = HttpContextAccessor.HttpContext?.Session.GetString("IsAdmin") == "true";
+    var userEmail = HttpContextAccessor.HttpContext?.Session.GetString("UserEmail");
+}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - HomeLoan</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="~/images/favicon.ico">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Optional Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* 🌐 Global Theme */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* === PRELOADER === */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: opacity 0.5s ease, visibility 0.5s;
+        }
+
+            #preloader.hidden {
+                opacity: 0;
+                visibility: hidden;
+            }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #e0e0e0;
+            border-top-color: #004aad;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+
+
+
+        #preloader img {
+            height: 50px;
+            margin-bottom: 15px;
+        }
+
+        /* === NAVBAR === */
+
+        nav.navbar {
+            transition: all 0.3s ease-in-out;
+            background-color: rgba(255,255,255,0.95);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        nav.scrolled {
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .navbar-brand img {
+            transition: transform 0.3s;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: #004aad !important;
+            transition: color 0.3s;
+        }
+
+            .nav-link:hover {
+                color: #000000 !important;
+            }
+
+        /* === FOOTER === */
+        footer {
+            background: rgba(63, 128, 197, 0.97);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+            footer a {
+                color: #a8d1ff;
+                text-decoration: none;
+            }
+
+                footer a:hover {
+                    text-decoration: underline;
+                }
+
+        /* === BUTTONS === */
+        .btn-primary {
+            background-color: #004aad;
+            border-color: #004aad;
+        }
+
+            .btn-primary:hover {
+                background-color: #003b8c;
+            }
+
+        /* === FADE IN === */
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+
+
+        .navbar-brand img:hover {
+            transform: scale(1.1);
+        }
+
+        .nav-link {
+            color: white !important;
+            margin-left: 10px;
+        }
+
+            .nav-link:hover {
+                text-decoration: underline;
+            }
+
+        /* Admin-specific compact nav right alignment */
+        .admin-nav-right {
+            margin-left: auto;
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+        }
+
+            .admin-nav-right .nav-link {
+                color: #fff !important;
+                padding: .45rem .8rem;
+                background: rgba(255,255,255,0.06);
+                border-radius: 8px;
+                transition: background .18s ease, transform .12s ease, box-shadow .18s ease;
+                display: inline-flex;
+                align-items: center;
+                gap: .5rem;
+            }
+
+                /* active / clicked state */
+                .admin-nav-right .nav-link.active-admin,
+                .admin-nav-right .nav-link:active,
+                .admin-nav-right .nav-link:focus {
+                    background: rgba(255,255,255,0.18);
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+                    outline: none;
+                }
+
+            /* prominent logout button styling */
+            .admin-nav-right .logout {
+                background: linear-gradient(90deg,#ff6b35,#ff8c42);
+                color: #111 !important;
+                font-weight: 700;
+                padding: .5rem .95rem;
+                border-radius: 10px;
+                box-shadow: 0 10px 26px rgba(255,140,66,0.18);
+                border: 1px solid rgba(255,255,255,0.12);
+                transition: transform .12s ease, box-shadow .18s ease, filter .12s ease;
+            }
+
+                .admin-nav-right .logout:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 16px 34px rgba(255,140,66,0.22);
+                    filter: brightness(1.02);
+                    color: #080808 !important;
+                }
+
+                .admin-nav-right .logout:active {
+                    transform: translateY(1px);
+                    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+                }
+
+        /* small screens tweak to keep right-aligned links stacked */
+        @@media (max-width: 575px) {
+            .admin-nav-right
+
+        {
+            gap: .4rem;
+        }
+
+        .admin-nav-right .nav-link {
+            padding: .45rem .6rem;
+            font-size: .95rem;
+        }
+
+        }
+
+        /* Sidebar toggle button (admin navbar) */
+        .sidebar-toggle-btn {
+            background: rgba(255,255,255,0.06);
+            border: none;
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            margin-right: 8px;
+            transition: transform .12s ease, box-shadow .12s ease;
+        }
+        .sidebar-toggle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+        }
+        /* Ensure validation messages are smaller and override Bootstrap where needed */
+        form span[data-valmsg-for],
+        form span[data-valmsg-for].field-validation-valid,
+        form span.field-validation-valid,
+        form .validation-summary-valid,
+        form .validation-summary-errors {
+            font-size: 0.8rem !important;
+            line-height: 1.2 !important;
+            margin-top: 0.15rem !important;
+            color: #dc3545; /* optional: keep same red color as bootstrap validation */
+        }
+    </style>
+
+    @RenderSection("HeadScripts", required: false)
+</head>
+<body>
+    <!-- 🌀 PRELOADER -->
+    <div id="preloader">
+        <img src="@Url.Content("~/images/homelogo.jpg")" alt="HomeLoan Logo" />
+        <div class="spinner"></div>
+        <p class="mt-3 text-secondary">Loading secure experience...</p>
+    </div>
+
+    <!-- 🌐 NAVBAR -->
+    @if (isAdmin)
+    {
+        <!-- Minimal, admin-only navbar: toggle button on left; logo next; Dashboard + Logout on right -->
+        <nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background-color:rgba(63, 128, 197, 0.97);">
+            <div class="container d-flex align-items-center">
+                <!-- Sidebar toggle placed BEFORE brand as requested -->
+                <button id="sidebarToggle" class="sidebar-toggle-btn" aria-label="Toggle sidebar" title="Toggle sidebar" type="button">
+                    <span style="font-size:18px; line-height:1;">☰</span>
+                </button>
+
+                <a class="navbar-brand fw-bold d-flex align-items-center" href="/Admin/Dashboard">
+                    <img src="@Url.Content("~/images/homelogo.jpg")" alt="HomeLoan" style="height:44px; border-radius:8px" class="me-2" />
+                    HomeLoan
+                </a>
+
+                <div class="admin-nav-right" role="navigation" aria-label="Admin navigation">
+                    <a class="nav-link text-white" href="/Admin/Dashboard" id="adminDashLink">Dashboard</a>
+                    <a class="nav-link logout" href="/Admin/Logout" id="adminLogout">Logout</a>
+                </div>
+            </div>
+        </nav>
+    }
+    else
+    {
+        <!-- Regular site navbar (unchanged) -->
+        <nav class="navbar navbar-expand-lg navbar-dark  shadow-sm " style="background-color:rgba(63, 128, 197, 0.97)">
+            <!--bg-primary-->
+            <div class="container">
+                <a class="navbar-brand fw-bold d-flex align-items-center" href="/Home/Index">
+                    <img src="@Url.Content("~/images/homelogo.jpg")" alt="HomeLoan" style="height:50px; border-radius:50%" class="me-2" />
+                    HomeLoan
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="/Home/Index">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Home/AboutUs">About Us</a></li>
+
+                        <li class="nav-item"><a class="nav-link" href="/LoanTracker">Track Loan</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Home/Calculator">Calculator</a></li>
+                        
+                        <li class="nav-item"><a class="nav-link" href="/Loan/Apply">Apply</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Home/FAQ">FAQ</a></li>
+      
+                        <li class="nav-item"><a class="nav-link" href="/Home/Contact">Contact</a></li>
+                    </ul>
+
+                    <!-- RIGHT SIDE BUTTONS -->
+                    <ul class="navbar-nav mb-2 mb-lg-0">
+                        @if (isAdmin)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="/Admin/Dashboard">Admin Panel</a></li>
+                            <li class="nav-item"><a class="nav-link text-warning" href="/Admin/Logout">Logout</a></li>
+                        }
+                        else if (isLoggedIn)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="/Account/Dashboard">My Account</a></li>
+                            <li class="nav-item"><a class="nav-link text-warning" href="/Account/Logout">Logout</a></li>
+                        }
+                        else
+                        {
+                            <li class="nav-item"><a class="nav-link" href="/Account/Login">Login</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/Account/Register">Register</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    }
+
+    <div class="pt-1 fade-in">
+        @RenderBody()
+    </div>
+    <!-- Chat Bubble -->
+    <button id="chatbotBtn" class="chatbot-toggle">💬</button>
+
+    <!-- Chat Box -->
+    <div id="chatbox" class="chatbox-container">
+        <div class="chatbox-header">EasyHome AI Assistant</div>
+        <div id="chatMessages" class="chatbox-messages">
+            <div class="bot-message message">👋 Hello! How can I assist you with your home loan today?</div>
+        </div>
+        <div class="chatbox-input">
+            <input id="userInput" type="text" placeholder="Type your question..." />
+            <button id="sendBtn">Send</button>
+        </div>
+    </div>
+
+    <!-- 🌐 FOOTER -->
+    <footer>
+        <div class="footer-info mt-5">
+            <div class="col">
+                <h5>Overview</h5>
+                <ul>
+                    <li><a href="#">Who We Are</a></li>
+                    <li><a href="#">About Us</a></li>
+
+                    <li><a href="#">Our Team</a></li>
+                </ul>
+            </div>
+
+            <div class="col">
+                <h5>Our Products</h5>
+                <ul>
+                    <li><a href="/Home/Index">Home Loan</a></li>
+                    <li><a href="/Home/Calculator">Loan Calculator</a></li>
+                    <li><a href="/Loantracker/Index">EMI Tracker</a></li>
+
+                </ul>
+            </div>
+
+            <div class="col">
+                <h5>Head Office</h5>
+                <ul>
+                    <li style="color:white">EasyHome Loans Pvt. Ltd.</li>
+                    <li style="color:white">Hyderabad, Telangana, India</li>
+                    <li style="color:white">📞 +91 98765 43210</li>
+                    <li style="color:white">📧 support@easyhome.com</li>
+                </ul>
+            </div>
+
+            <div class="col">
+                <h5>Useful Links</h5>
+                <ul>
+                    <li><a href="/Home/Index">Home</a></li>
+                    <li><a href="/Home/Calculator">Calculator</a></li>
+                    <li><a href="/Home/FAQ">FAQs</a></li>
+                    <li><a href="/Home/Contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="container">
+            <p class="mb-2">© @DateTime.Now.Year HomeLoan Bank — Secure, Smart, and Simple.</p>
+            <p>
+                <a href="/Home/FAQ">FAQ</a> |
+                <a href="/Home/Contact">Contact</a> |
+                <a href="/LoanTracker/Index">Track Loan</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navbar color change on scroll
+        window.addEventListener('scroll', function() {
+          const nav = document.querySelector('nav');
+          if (window.scrollY > 50) nav.classList.add('scrolled');
+          else nav.classList.remove('scrolled');
+        });
+
+        // Preloader fade out after page loads
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            preloader.classList.add('hidden');
+            setTimeout(() => preloader.style.display = 'none', 600);
+        });
+
+        // Admin nav click state handling (keeps visual active state after click until navigation)
+        document.addEventListener('DOMContentLoaded', function () {
+            const adminNav = document.querySelector('.admin-nav-right');
+            if (adminNav) {
+                adminNav.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', function (e) {
+                        // set active class visually; navigation will follow
+                        adminNav.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active-admin'));
+                        this.classList.add('active-admin');
+                    });
+                });
+            }
+
+            const chatbotBtn = document.getElementById("chatbotBtn");
+            const chatbox = document.getElementById("chatbox");
+            const chatMessages = document.getElementById("chatMessages");
+            const userInput = document.getElementById("userInput");
+            const sendBtn = document.getElementById("sendBtn");
+
+            if (chatbotBtn) {
+                chatbotBtn.addEventListener("click", () => {
+                    chatbox.style.display = chatbox.style.display === "flex" ? "none" : "flex";
+                });
+            }
+
+            if (sendBtn) {
+                sendBtn.addEventListener("click", sendMessage);
+            }
+            if (userInput) {
+                userInput.addEventListener("keypress", e => {
+                    if (e.key === "Enter") sendMessage();
+                });
+            }
+
+            function sendMessage() {
+                const text = userInput?.value.trim();
+                if (!text) return;
+
+                appendMessage("user", text);
+                if (userInput) userInput.value = "";
+
+                // Simulate AI response (you can connect to OpenAI API later)
+                setTimeout(() => {
+                    let reply = getBotReply(text);
+                    appendMessage("bot", reply);
+                }, 600);
+            }
+
+            function appendMessage(sender, text) {
+                const msg = document.createElement("div");
+                msg.classList.add("message", sender === "user" ? "user-message" : "bot-message");
+                msg.textContent = text;
+                chatMessages.appendChild(msg);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function getBotReply(text) {
+                text = text.toLowerCase();
+                if (text.includes("loan")) return "You can apply for a home loan under the 'Apply' section.";
+                if (text.includes("emi")) return "You can use our EMI Calculator to estimate your monthly payments.";
+                if (text.includes("interest")) return "Our current interest rate starts at 8.5% per annum.";
+                if (text.includes("hello") || text.includes("hi")) return "Hello! How can I help you today?";
+                return "I'm here to assist you with home loans, EMIs, or eligibility queries.";
+            }
+
+            // Sidebar toggle (works on admin pages that include `.admin-sidebar`)
+            const sidebarToggleBtn = document.getElementById('sidebarToggle');
+            if (sidebarToggleBtn) {
+                sidebarToggleBtn.addEventListener('click', () => {
+                    document.body.classList.toggle('sidebar-collapsed');
+                });
+            }
+        });
+    </script>
+    @RenderSection("Scripts", required: false)
+    <!-- ✅ SUCCESS POPUP -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">✅ Success</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center py-4">
+                        <p class="fs-5 fw-semibold">@TempData["SuccessMessage"]</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success w-100" data-bs-dismiss="modal">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            window.addEventListener('load', () => {
+                const m = new bootstrap.Modal(document.getElementById('successModal'));
+                m.show();
+            });
+        </script>
+    }
+
+    <!-- ❌ ERROR POPUP -->
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title">❌ Error</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center py-4">
+                        <p class="fs-5 fw-semibold">@TempData["ErrorMessage"]</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-danger w-100" data-bs-dismiss="modal">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            window.addEventListener('load', () => {
+                const m = new bootstrap.Modal(document.getElementById('errorModal'));
+                m.show();
+            });
+
+
+        </script>
+    }
+
+    <style>
+
+        .modal-content {
+            border-radius: 15px;
+            animation: fadeIn .6s ease;
+        }
+
+
+        .footer-info {
+            /* background: #fff; */
+            /* border-top: 1px solid #dee2e6;   */
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+            .footer-info .col {
+                flex: 1;
+                min-width: 220px;
+            }
+
+            .footer-info h5 {
+                font-weight: 600;
+                color: #000000;
+                margin-bottom: 15px;
+            }
+
+            .footer-info ul {
+                list-style: none;
+                padding-left: 0;
+            }
+
+                .footer-info ul li {
+                    margin-bottom: 6px;
+                    color: #333;
+                }
+
+            .footer-info a {
+                color: #ffffff;
+                text-decoration: none;
+            }
+
+                .footer-info a:hover {
+                    text-decoration: underline;
+                    color: rgba(12,12,256,0.98);
+                }
+
+        footer {
+            background-color: rgba(63, 128, 197, 0.97);
+            margin: 1px;
+            padding: 1px;
+        }
+
+        .chatbot-toggle {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background-color: #003366;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 9999;
+        }
+
+            .chatbot-toggle:hover {
+                background-color: #00509e;
+                transform: scale(1.1);
+            }
+
+        .chatbox-container {
+            position: fixed;
+            bottom: 100px;
+            right: 25px;
+            width: 320px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 9999;
+        }
+
+        .chatbox-header {
+            background-color: #003366;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .chatbox-messages {
+            height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #f8f9fa;
+        }
+
+        .chatbox-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #dee2e6;
+        }
+
+            .chatbox-input input {
+                flex: 1;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                padding: 8px;
+                outline: none;
+            }
+
+            .chatbox-input button {
+                background-color: #003366;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 8px 12px;
+                margin-left: 5px;
+                cursor: pointer;
+            }
+
+        .message {
+            margin: 6px 0;
+            padding: 8px 12px;
+            border-radius: 12px;
+            max-width: 80%;
+        }
+
+        .user-message {
+            background: #e3f2fd;
+            align-self: flex-end;
+        }
+
+        .bot-message {
+            background: #dee9ff;
+            align-self: flex-start;
+        }
+    </style>
+
+</body>
+</html>

@@ -1,0 +1,109 @@
+﻿@model HomeLoan.Models.LoanApplication
+@{
+    ViewData["Title"] = "Application Details";
+}
+
+<div class="admin-panel panel-details p-4 rounded-4 my-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0">Application #@Model.Id</h3>
+        <div>
+            <a class="btn btn-secondary me-2" href="/Admin/Applications">Back</a>
+            <a class="btn btn-info" href="/Admin/ViewDocuments?loanId=@Model.Id">View Documents</a>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="panel-card p-3">
+                <h5 class="mb-2">Applicant</h5>
+                <p><strong>Name:</strong> @Model.FirstName @Model.LastName</p>
+                <p><strong>DOB:</strong> @Model.DOB.ToString("yyyy-MM-dd")</p>
+                <p><strong>Aadhar:</strong> @Model.AadharNumber</p>
+                <p><strong>PAN:</strong> @Model.PanNumber</p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="panel-card p-3">
+                <h5 class="mb-2">Loan Details</h5>
+                <p><strong>Property:</strong> @Model.PropertyName</p>
+                <p><strong>Estimated Cost:</strong> ₹@Model.EstimatedPropertyCost.ToString("N0")</p>
+                <p><strong>Loan Amount:</strong> ₹@Model.LoanAmount.ToString("N0")</p>
+                <p><strong>Tenure:</strong> @(Model.TenureMonths / 12) years</p>
+                <p><strong>Interest Rate:</strong> @Model.InterestRate %</p>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="panel-card p-3">
+                <h5 class="mb-2">Status & Actions <span class="required">Required</span></h5>
+                <p><strong>Current Status:</strong> @Model.Status</p>
+                <p><strong>Applied On:</strong> @Model.AppliedOn.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</p>
+
+                <form asp-action="UpdateStatus" method="post" class="d-flex align-items-center gap-2 mt-3">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <select name="status" class="form-select w-auto">
+                        <option @@(Model.Status == "Sent for verification" ? "selected" : "")>Sent for verification</option>
+                        <option @@(Model.Status == "Verified and sent for final approval" ? "selected" : "")>Verified and sent for final approval</option>
+                        <option @@(Model.Status == "Approved" ? "selected" : "")>Approved</option>
+                        <option @@(Model.Status == "Rejected" ? "selected" : "")>Rejected</option>
+                    </select>
+                    <button class="btn btn-success">Update Status</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Panel wrapper */
+    .admin-panel.panel-details {
+        background: linear-gradient(135deg, #e0e7ff 0%, #a8d1ff 40%, #004aad 100%);
+        border: 2px solid #000;
+        box-shadow: 0 18px 48px rgba(2,6,23,0.10);
+        border-left: 8px solid #00509e; /* prominent left accent */
+    }
+
+    /* Inner cards */
+    .panel-card {
+        background: #fff;
+        border: 2px solid rgba(98,128,169,0.15); /* slightly thicker border */
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(2,6,23,0.06);
+        transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .panel-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 52px rgba(2,6,23,0.10);
+    }
+
+    /* Required badge/label: left border + text-shadow for prominence */
+    .required {
+        display: inline-block;
+        margin-left: 10px;
+        padding: 4px 10px;
+        border-left: 4px solid #ff6b35;
+        background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.02));
+        color: #ff6b35;
+        font-weight: 700;
+        border-radius: 6px;
+        text-shadow: 0 3px 10px rgba(255,107,53,0.18);
+        box-shadow: 0 6px 18px rgba(255,107,53,0.06);
+        vertical-align: middle;
+        font-size: .85rem;
+    }
+
+    /* Tighter spacing for fields inside cards */
+    .panel-card p { margin-bottom: 0.6rem; }
+
+    /* Make the update controls visually stand out */
+    form select.form-select { min-width: 220px; border: 1px solid rgba(3,37,65,0.08); }
+    form .btn-success { box-shadow: 0 8px 20px rgba(0,128,0,0.12); }
+
+    /* Responsive adjustments */
+    @@media (max-width: 767.98px) {
+        .admin-panel.panel-details { padding: 1rem; border-left-width: 6px; }
+        .panel-card { margin-bottom: .5rem; }
+    }
+</style>

@@ -1,0 +1,13 @@
+﻿@model IEnumerable<HomeLoan.Models.UserQuery>
+<table>
+    <tr><th>Name</th><th>Email</th><th>Message</th><th>Date</th></tr>
+    @foreach (var q in Model)
+    {
+        <tr>
+            <td>@q.Name</td>
+            <td>@q.Email</td>
+            <td>@q.Message</td>
+            <td>@q.SubmittedOn.ToString("g")</td>
+        </tr>
+    }
+</table>

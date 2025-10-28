@@ -1,0 +1,72 @@
+﻿@model HomeLoan.Models.LoanApplication
+@{
+    ViewData["Title"] = "Application Confirmation";
+}
+
+<div class="container my-5 text-center fade-in">
+    <div class="success-box mx-auto p-4 shadow-sm">
+        <div class="checkmark-wrapper mb-3">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+                <path class="checkmark-check" fill="none" d="M14 27l7 7 16-16" />
+            </svg>
+        </div>
+
+        <h2 class="text-success mb-2 fw-bold">Application Submitted Successfully!</h2>
+        <p class="text-muted mb-4">Thank you, @Model.FirstName. Your application has been received.</p>
+
+        <div class="card mx-auto text-start p-3" style="max-width:450px;">
+            <p><strong>Application ID:</strong> @Model.Id</p>
+            <p><strong>Status:</strong> @Model.Status</p>
+            <p><strong>Loan Amount:</strong> ₹@Model.LoanAmount.ToString("N0")</p>
+            <p><strong>Applied On:</strong> @Model.AppliedOn.ToString("dd MMM yyyy")</p>
+        </div>
+
+        <a href="/LoanTracker" class="btn btn-outline-primary mt-4 me-2">Track Your Loan</a>
+        <a href="/" class="btn btn-primary mt-4">Return to Home</a>
+    </div>
+</div>
+
+<style>
+    .success-box {
+        border-radius: 12px;
+        background: #fff;
+        max-width: 600px;
+    }
+
+    /* ✅ Animated Green Tick */
+    .checkmark-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .checkmark {
+        width: 80px;
+        height: 80px;
+        stroke-width: 2;
+        stroke: #28a745;
+        stroke-miterlimit: 10;
+        animation: scale .3s ease-in-out .9s both;
+    }
+
+    .checkmark-circle {
+        stroke-dasharray: 166;
+        stroke-dashoffset: 166;
+        stroke-width: 2;
+        stroke-miterlimit: 10;
+        stroke: #28a745;
+        fill: none;
+        animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+
+    .checkmark-check {
+        transform-origin: 50% 50%;
+        stroke-dasharray: 48;
+        stroke-dashoffset: 48;
+        animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+    }
+
+    
+</style>
+SVG namespace

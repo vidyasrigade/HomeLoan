@@ -1,0 +1,498 @@
+﻿@{
+
+    ViewData["Title"] = "Make a Payment";
+
+    var amount = ViewData["Amount"] as string ?? "";
+
+    var loanId = ViewData["LoanId"] as string ?? "";
+
+}
+
+
+
+
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-6">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header bg-primary text-white">
+
+                    <h5 class="mb-0">Make a Payment</h5>
+
+                </div>
+
+
+
+                <div class="card-body">
+
+                    <form id="payForm" asp-action="PayPost" method="post" novalidate>
+
+                        @Html.AntiForgeryToken()
+
+
+
+                        <input type="hidden" name="loanId" value="@loanId" />
+
+
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+
+
+                        <div class="mb-3">
+
+                            <label for="amount" class="form-label">Amount (₹)</label>
+
+                            <input id="amount" name="amount" type="number" step="0.01" class="form-control" value="@amount" required aria-required="true" />
+
+                            <div id="error-amount" class="text-danger small"></div>
+
+                           
+                        </div>
+
+
+
+                        <div class="mb-3">
+
+                            <label for="paymentMethod" class="form-label">Payment Method</label>
+
+                            <select id="paymentMethod" name="paymentMethod" class="form-select" required aria-required="true">
+
+                                <option value="">Select payment method</option>
+
+                                <option value="card">Credit / Debit Card</option>
+
+                                <option value="netbanking">NetBanking</option>
+
+                                <option value="upi">UPI</option>
+
+                            </select>
+
+                            <div id="error-paymentMethod" class="text-danger small"></div>
+
+                        </div>
+
+
+
+                        <!-- Card fields -->
+
+                        <div id="cardFields" style="display:none;">
+
+                            <div class="mb-3">
+
+                                <label class="form-label">Card number</label>
+
+                                <input id="cardNumber" name="cardNumber" type="text" maxlength="19" pattern="\d{12,19}" class="form-control" placeholder="0000 0000 0000 0000" />
+
+                                <div id="error-cardNumber" class="text-danger small"></div>
+
+                            </div>
+
+                            <div class="row">
+
+                                <div class="col-6 mb-3">
+
+                                    <label class="form-label">Expiry (MM/YY)</label>
+
+                                    <input id="cardExpiry" name="cardExpiry" type="text" pattern="(0[1-9]|1[0-2])\/\d{2}" class="form-control" placeholder="MM/YY" />
+
+                                    <div id="error-cardExpiry" class="text-danger small"></div>
+
+                                </div>
+
+                                <div class="col-6 mb-3">
+
+                                    <label class="form-label">CVV</label>
+
+                                    <input id="cardCvv" name="cardCvv" type="text" maxlength="4" pattern="\d{3,4}" class="form-control" placeholder="123" />
+
+                                    <div id="error-cardCvv" class="text-danger small"></div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- NetBanking fields -->
+
+                        <div id="netbankFields" style="display:none;">
+
+                            <div class="mb-3">
+
+                                <label class="form-label">Bank name</label>
+
+                                <input id="bankName" name="bankName" type="text" class="form-control" />
+
+                                <div id="error-bankName" class="text-danger small"></div>
+
+                            </div>
+
+                            <div class="mb-3">
+
+                                <label class="form-label">Account number</label>
+
+                                <input id="accountNumber" name="accountNumber" type="text" class="form-control" />
+
+                                <div id="error-accountNumber" class="text-danger small"></div>
+
+                            </div>
+
+                            <div class="mb-3">
+
+                                <label class="form-label">Account holder name</label>
+
+                                <input id="accountHolder" name="accountHolder" type="text" class="form-control" />
+
+                                <div id="error-accountHolder" class="text-danger small"></div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- UPI fields -->
+
+                        <div id="upiFields" style="display:none;">
+
+                            <div class="mb-3">
+
+                                <label class="form-label">UPI ID</label>
+
+                                <input id="upiId" name="upiId" type="text" class="form-control" placeholder="example@bank" />
+
+                                <div id="error-upiId" class="text-danger small"></div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="text-end">
+
+                            <button id="payBtn" class="btn btn-primary" type="submit">Pay</button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+
+            
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+<style>
+
+    .card {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+
+
+    .card-header {
+        background: linear-gradient(90deg, #004aad, #0078ff);
+        color: white;
+        padding: 1rem 1.25rem;
+        border-bottom: none;
+    }
+
+
+
+    .card-body {
+        background-color: #f8fbff;
+        padding: 1.5rem;
+    }
+
+
+
+    .form-label {
+        font-weight: 600;
+        color: #003366;
+    }
+
+
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        transition: border-color 0.3s ease;
+    }
+
+
+
+        .form-control:focus, .form-select:focus {
+            border-color: #0078ff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 120, 255, 0.25);
+        }
+
+
+
+    .btn-primary {
+        background: linear-gradient(90deg, #004aad, #0078ff);
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1.25rem;
+        font-weight: 600;
+        box-shadow: 0 3px 10px rgba(0, 74, 173, 0.2);
+    }
+
+
+
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #003a8b, #006be0);
+        }
+
+
+
+    .text-muted.small {
+        font-size: 0.85rem;
+        color: #666;
+    }
+
+
+
+    .text-danger.small {
+        font-size: 0.85rem;
+    }
+
+
+
+    .form-text {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+
+
+
+    #payForm .mb-3 {
+        margin-bottom: 1.25rem;
+    }
+
+
+
+    #payForm .row .col-6 {
+        padding-right: 0.5rem;
+        padding-left: 0.5rem;
+    }
+
+
+
+    .container.py-5 {
+        background: linear-gradient(to bottom right, #eef4ff, #dbe9ff);
+        border-radius: 12px;
+    }
+
+</style>
+
+
+
+
+
+
+
+<partial name="_ValidationScriptsPartial" />
+
+
+
+<script>
+
+    (function () {
+
+        const pm = document.getElementById('paymentMethod');
+
+        const cardFields = document.getElementById('cardFields');
+
+        const netbankFields = document.getElementById('netbankFields');
+
+        const upiFields = document.getElementById('upiFields');
+
+
+
+        function clearErrors() {
+
+            document.querySelectorAll('[id^="error-"]').forEach(el => el.textContent = '');
+
+        }
+
+
+
+        function showSectionFor(method) {
+
+            cardFields.style.display = (method === 'card') ? '' : 'none';
+
+            netbankFields.style.display = (method === 'netbanking') ? '' : 'none';
+
+            upiFields.style.display = (method === 'upi') ? '' : 'none';
+
+        }
+
+
+
+        function updateRequiredAttrs(method) {
+
+            // clear all required first
+
+            ['cardNumber','cardExpiry','cardCvv','bankName','accountNumber','accountHolder','upiId'].forEach(id => {
+
+                const el = document.getElementById(id);
+
+                if (el) el.removeAttribute('required');
+
+            });
+
+
+
+            if (method === 'card') {
+
+                ['cardNumber','cardExpiry','cardCvv'].forEach(id => document.getElementById(id).setAttribute('required','true'));
+
+            } else if (method === 'netbanking') {
+
+                ['bankName','accountNumber','accountHolder'].forEach(id => document.getElementById(id).setAttribute('required','true'));
+
+            } else if (method === 'upi') {
+
+                document.getElementById('upiId').setAttribute('required','true');
+
+            }
+
+        }
+
+
+
+        function updateFields() {
+
+            const method = pm.value;
+
+            showSectionFor(method);
+
+            updateRequiredAttrs(method);
+
+            clearErrors();
+
+        }
+
+
+
+        pm.addEventListener('change', updateFields);
+
+        document.addEventListener('DOMContentLoaded', updateFields);
+
+
+
+        // form validation on submit (client-side) - shows inline errors and prevents submit if invalid
+
+        const form = document.getElementById('payForm');
+
+        form.addEventListener('submit', function (e) {
+
+            clearErrors();
+
+            let valid = true;
+
+
+
+            const amt = document.getElementById('amount');
+
+            if (!amt || !amt.value || Number(amt.value) <= 0) {
+
+                document.getElementById('error-amount').textContent = 'Please enter a valid amount.';
+
+                valid = false;
+
+            }
+
+
+
+            if (!pm.value) {
+
+                document.getElementById('error-paymentMethod').textContent = 'Please select a payment method.';
+
+                valid = false;
+
+            } else if (pm.value === 'card') {
+
+                const cn = document.getElementById('cardNumber');
+
+                const ce = document.getElementById('cardExpiry');
+
+                const cv = document.getElementById('cardCvv');
+
+                if (!cn || !cn.value) { document.getElementById('error-cardNumber').textContent = 'Card number is required.'; valid = false; }
+
+                if (!ce || !ce.value) { document.getElementById('error-cardExpiry').textContent = 'Expiry is required.'; valid = false; }
+
+                if (!cv || !cv.value) { document.getElementById('error-cardCvv').textContent = 'CVV is required.'; valid = false; }
+
+            } else if (pm.value === 'netbanking') {
+
+                const bn = document.getElementById('bankName');
+
+                const an = document.getElementById('accountNumber');
+
+                const ah = document.getElementById('accountHolder');
+
+                if (!bn || !bn.value) { document.getElementById('error-bankName').textContent = 'Bank name is required.'; valid = false; }
+
+                if (!an || !an.value) { document.getElementById('error-accountNumber').textContent = 'Account number is required.'; valid = false; }
+
+                if (!ah || !ah.value) { document.getElementById('error-accountHolder').textContent = 'Account holder name is required.'; valid = false; }
+
+            } else if (pm.value === 'upi') {
+
+                const up = document.getElementById('upiId');
+
+                if (!up || !up.value) { document.getElementById('error-upiId').textContent = 'UPI ID is required.'; valid = false; }
+
+            }
+
+
+
+            if (!valid) {
+
+                e.preventDefault();
+
+                // focus first visible error
+
+                const firstError = document.querySelector('.text-danger.small:not(:empty)');
+
+                if (firstError) {
+
+                    const id = firstError.id.replace('error-','');
+
+                    const el = document.getElementById(id) || firstError;
+
+                    if (el && typeof el.focus === 'function') el.focus();
+
+                }
+
+            }
+
+        });
+
+    })();
+
+</script>

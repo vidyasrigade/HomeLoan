@@ -1,0 +1,193 @@
+﻿@model HomeLoan.ViewModels.LoanApplicationViewModel 
+@{
+ViewData["Title"] = "Apply for Home Loan";
+}
+<div class="login-bg d-flex justify-content-center align-items-center" style="min-height: 100vh; padding-top: 0; padding-bottom: 0;">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10">
+                <div class="card shadow-lg p-4" style="width:100%; max-width:1100px; border:1px solid #000;">
+                    <div class="card-header bg-primary text-white"> <h4 class="mb-0">🏠 Home Loan Application Form</h4> </div>
+                    <div class="card-body">
+                        <form asp-action="Apply" method="post" enctype="multipart/form-data" novalidate>
+                            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                            <!-- PERSONAL INFORMATION -->
+                            <h5 class="text-primary mb-3">Personal Information</h5>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label asp-for="FirstName" class="form-label form-label-shadow">First Name</label>
+                                    <input asp-for="FirstName" class="form-control input-shadow" />
+                                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label asp-for="LastName" class="form-label form-label-shadow">Last Name</label>
+                                    <input asp-for="LastName" class="form-control input-shadow" />
+                                    <span asp-validation-for="LastName" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label asp-for="DOB" class="form-label form-label-shadow">DOB</label>
+                                    <input asp-for="DOB" type="date" class="form-control input-shadow" />
+                                    <span asp-validation-for="DOB" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="AadharNumber" class="form-label form-label-shadow">Aadhaar Number</label>
+                                    <input asp-for="AadharNumber" class="form-control input-shadow" />
+                                    <span asp-validation-for="AadharNumber" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="PanNumber" class="form-label form-label-shadow">PAN Number</label>
+                                    <input asp-for="PanNumber" class="form-control input-shadow" />
+                                    <span asp-validation-for="PanNumber" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <h5 class="text-primary mt-4">Contact & Account </h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Email" class="form-label form-label-shadow">Email (create account)</label>
+                                    <input asp-for="Email" type="email" class="form-control input-shadow" />
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label asp-for="Password" class="form-label form-label-shadow">Password</label>
+                                    <input asp-for="Password" type="password" class="form-control input-shadow" />
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label asp-for="ConfirmPassword" class="form-label form-label-shadow">Confirm Password</label>
+                                    <input asp-for="ConfirmPassword" type="password" class="form-control input-shadow" />
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="MobileNumber" class="form-label form-label-shadow">Mobile</label>
+                                <input asp-for="MobileNumber" class="form-control input-shadow" />
+                                <span asp-validation-for="MobileNumber" class="text-danger"></span>
+                            </div>
+
+                            <!-- PROPERTY -->
+                            <h5 class="text-primary mt-4">Property Details</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="PropertyName" class="form-label form-label-shadow">Property Name / Location</label>
+                                    <input asp-for="PropertyName" class="form-control input-shadow" />
+                                    <span asp-validation-for="PropertyName" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="EstimatedPropertyCost" class="form-label form-label-shadow">Estimated Cost</label>
+                                    <input asp-for="EstimatedPropertyCost" type="number" class="form-control input-shadow" />
+                                    <span asp-validation-for="EstimatedPropertyCost" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- LOAN -->
+                            <h5 class="text-primary mt-4">Loan Details</h5>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label asp-for="LoanAmount" class="form-label form-label-shadow">Loan Amount (₹)</label>
+                                    <input asp-for="LoanAmount" type="number" class="form-control input-shadow" />
+                                    <span asp-validation-for="LoanAmount" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label asp-for="TenureYears" class="form-label form-label-shadow">Tenure (Years)</label>
+                                    <input asp-for="TenureYears" type="number" class="form-control input-shadow" />
+                                    <span asp-validation-for="TenureYears" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label asp-for="InterestRate" class="form-label form-label-shadow">Interest Rate (%)</label>
+                                    <input asp-for="InterestRate" type="number" step="0.1" class="form-control input-shadow" />
+                                    <span asp-validation-for="InterestRate" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- DOCUMENT UPLOAD -->
+                            <h5 class="text-primary mt-4">Upload Documents</h5>
+                            <div class="mb-3">
+                                <label asp-for="AadharFile" class="form-label form-label-shadow">Aadhaar (scan)</label>
+                                <input asp-for="AadharFile" type="file" class="form-control input-shadow" />
+                                <span asp-validation-for="AadharFile" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="PanFile" class="form-label form-label-shadow">PAN (scan)</label>
+                                <input asp-for="PanFile" type="file" class="form-control input-shadow" />
+                                <span asp-validation-for="PanFile" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="SalarySlip" class="form-label form-label-shadow">Salary Slip / Income Proof</label>
+                                <input asp-for="SalarySlip" type="file" class="form-control input-shadow" />
+                                <span asp-validation-for="SalarySlip" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-check mt-3">
+                                <input type="checkbox" id="agree" class="form-check-input" required>
+                                <label class="form-check-label" for="agree">I declare information is true.</label>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary px-4">Submit Application</button>
+                            </div>
+                        </form>
+
+                        <partial name="_ValidationScriptsPartial" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .login-bg {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #e0e7ff 0%, #a8d1ff 40%, #004aad 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    .card {
+        border-radius: 16px;
+        background: rgba(255,255,255,0.97);
+        box-shadow: 0 8px 32px rgba(10,26,60,0.12);
+        border: 1px solid #000;
+    }
+
+    .card-header {
+        border-radius: 10px 10px 0 0;
+    }
+
+    .input-shadow {
+        box-shadow: 0 0 8px rgba(0,0,0,0.15);
+        border: 1px solid #ced4da;
+        outline: none;
+        transition: box-shadow 0.2s, border-color 0.2s;
+    }
+
+        .input-shadow:focus {
+            border-color: #004aad;
+            box-shadow: 0 0 12px rgba(0,74,173,0.25);
+            outline: 1px solid #004aad;
+        }
+
+    .form-label-shadow {
+        text-shadow: 0 1px 1px rgba(10,26,60,0.15);
+    }
+    /* Ensure validation messages are smaller and override Bootstrap where needed */
+    form span[data-valmsg-for],
+    form span[data-valmsg-for].field-validation-valid,
+    form span.field-validation-valid,
+    form .validation-summary-valid,
+    form .validation-summary-errors {
+        font-size: 0.8rem !important;
+        line-height: 1.2 !important;
+        margin-top: 0.15rem !important;
+        color: #dc3545; /* optional: keep same red color as bootstrap validation */
+    }
+</style>

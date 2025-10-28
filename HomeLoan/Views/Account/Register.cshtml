@@ -1,0 +1,94 @@
+﻿@model HomeLoan.Models.AppUser
+@{
+    ViewData["Title"] = "Register";
+}
+<div class="forgot-bg d-flex justify-content-center align-items-center" style="min-height: 100vh; padding-top: 0; padding-bottom: 0;">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-sm p-4" style="border:1px solid #000000;">
+                    <h3 class="mb-3 text-primary">Register</h3>
+
+                    <form id="registerForm" asp-action="Register" method="post" novalidate>
+                        <div class="mb-3">
+                            <label class="form-label form-label-shadow">First Name</label>
+                            <input asp-for="FirstName" class="form-control input-shadow" id="FirstName" required />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                            <div id="error-FirstName" class="text-danger small"></div>
+                            </div>
+                        <div class="mb-3">
+                            <label class="form-label form-label-shadow">Last Name</label>
+                            <input asp-for="LastName" class="form-control input-shadow" required />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label form-label-shadow">Email</label>
+                            <input asp-for="Email" class="form-control input-shadow" required type="email" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label form-label-shadow">Mobile</label>
+                            <input asp-for="Mobile" class="form-control input-shadow" required pattern="\d{10}"
+                                   maxlength="10" />
+                            <span asp-validation-for="Mobile" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label form-label-shadow">Password</label>
+                            <input asp-for="PasswordHash" class="form-control input-shadow" required type="password" />
+                            <span asp-validation-for="PasswordHash" class="text-danger"></span>
+                        </div>
+
+                        <button class="btn btn-primary w-100">Register</button>
+                    </form>
+
+                    <div class="mt-4 text-center">
+                        <span>Already have an account?</span>
+                        <a href="/Account/Login" class="text-primary fw-semibold">Login here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .forgot-bg {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #e0e7ff 0%, #a8d1ff 40%, #004aad 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    .card {
+        border-radius: 12px;
+    }
+
+    .input-shadow {
+        box-shadow: 0 0 8px rgba(0,0,0,0.15);
+        border: 1px solid #ced4da;
+        outline: none;
+        transition: box-shadow 0.2s, border-color 0.2s;
+    }
+
+        .input-shadow:focus {
+            border-color: #0a1a3c;
+            box-shadow: 0 0 12px rgba(10,26,60,0.25);
+            outline: 1px solid #0a1a3c;
+        }
+
+    .form-label-shadow {
+        text-shadow: 0 1px 1px rgba(10,26,60,0.15);
+    }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

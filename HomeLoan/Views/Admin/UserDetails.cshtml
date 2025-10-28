@@ -1,0 +1,63 @@
+﻿@model HomeLoan.Models.AppUser
+@{
+    ViewData["Title"] = "User Details";
+}
+
+<div class="admin-panel panel-userdetails p-4 rounded-4 my-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0">User: @Model.FirstName @Model.LastName</h3>
+        <a class="btn btn-secondary" href="/Admin/Users">Back to Users</a>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="panel-card p-3">
+                <h5 class="mb-2">Profile</h5>
+                <p><strong>Email:</strong> @Model.Email</p>
+                <p><strong>Mobile:</strong> @Model.Mobile</p>
+                <p><strong>Registered On:</strong> @Model.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="panel-card p-3">
+                <h5 class="mb-2">Loan Applications</h5>
+                @if (Model.LoanApplications == null || !Model.LoanApplications.Any())
+                {
+                    <p class="text-muted">No applications for this user.</p>
+                }
+                else
+                {
+                    <ul class="list-group">
+                        @foreach (var la in Model.LoanApplications)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>#@la.Id</strong> — @la.PropertyName
+                                    <div class="text-muted small">₹@la.LoanAmount.ToString("N0") • @la.Status</div>
+                                </div>
+                                <a class="btn btn-sm btn-outline-primary" href="/Admin/ApplicationDetails?id=@la.Id">Open</a>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .admin-panel.panel-userdetails {
+        background: linear-gradient(135deg, #e0e7ff 0%, #a8d1ff 40%, #004aad 100%);
+        border: 1px solid rgba(3,37,65,0.06);
+        box-shadow: 0 12px 40px rgba(2,6,23,0.07);
+        border-left: 6px solid #1f7a3a;
+    }
+
+    .panel-card {
+        background: #fff;
+        border: 1px solid rgba(3,37,65,0.06);
+        border-radius: 10px;
+        box-shadow: 0 8px 30px rgba(2,6,23,0.04);
+    }
+</style>

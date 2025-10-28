@@ -1,0 +1,794 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+@model dynamic
+
+<div class="hero-section d-flex align-items-center text-white" style="background-image:url('/images/hero.jpg');">
+    <div class="overlay"></div>
+    <div class="container position-relative text-center fade-in">
+        <h1 class="display-4 fw-bold">Your Dream Home Awaits</h1>
+        <p class="lead">Instant approvals, minimal documentation, and flexible EMIs tailored for you.</p>
+        <a href="/Loan/Apply" class="btn  btn-lg mt-3" style="background-color:rgba(63, 128, 197, 0.97)">Apply Now</a>
+    </div>
+</div>
+<!-- Add this block after the .commitment-section in Index.cshtml -->
+<section class="about-stats-section py-5">
+    <div class="container">
+        <div class="row align-items-center gx-5">
+            <div class="col-md-5 mb-4 mb-md-0">
+                <img src="/images/homeloans.jpg" alt="Wooden house model" class="img-fluid rounded-3 shadow-sm" />
+            </div>
+
+            <div class="col-md-7">
+                <div class="small text-warning fw-bold mb-2">We are</div>
+                <h2 class="display-5 fw-bold text-primary mb-3">Dedicated to Fulfilling Your Dreams</h2>
+
+                <p class="text-muted mb-4">
+                    At India Home Loan Ltd., we believe in making the dream of owning a home accessible to everyone.
+                    Our expert team is committed to providing you with customized loan solutions that best suit your needs and financial goals.
+                </p>
+
+                <div class="row gy-4">
+                    <div class="col-12">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="stat-percent me-4">76<span class="small">%</span></div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-start justify-content-between">
+                                    <div>
+                                        <h5 class="mb-1 fw-bold">Customer Satisfaction</h5>
+                                        <p class="mb-0 text-muted">Our clients' happiness is our top priority, and we strive to exceed their expectations.</p>
+                                    </div>
+                                </div>
+
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="stat-percent me-4">93<span class="small">%</span></div>
+                            <div class="flex-grow-1 position-relative">
+                                <div class="d-flex align-items-start justify-content-between">
+                                    <div>
+                                        <h5 class="mb-1 fw-bold">Loan Approval Rate</h5>
+                                        <p class="mb-0 text-muted">We boast a high approval rate, ensuring more people can achieve their home ownership dreams.</p>
+                                    </div>
+                                </div>
+
+                               
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- /.row (stats) -->
+
+            </div> <!-- /.col-md-7 -->
+        </div> <!-- /.row -->
+    </div> <!-- /.container -->
+</section>
+
+<!-- ===== Loan Offerings Slider Section ===== -->
+<section class="loan-slider-section py-5 text-center text-dark">
+    <div class="container">
+        <h2 class="mb-4 fw-bold">Explore Our Wide Range of Loan Offerings</h2>
+        <p class="text-muted mb-5">Find the details about home loan rates, eligibility, and more.</p>
+
+        <div id="loanCarousel" class="carousel slide" data-bs-ride="false" data-bs-interval="false">
+            <div class="carousel-inner">
+
+                <!-- Slide 1 -->
+                <div class="carousel-item active">
+                    <div class="d-flex justify-content-center flex-wrap">
+                        <div class="loan-box" onclick="selectBox(this)">
+                            <h5>Housing Loans</h5>
+                            <p>Loans for home purchase, construction, or renovation.</p>
+                        </div>
+                        <div class="loan-box" onclick="selectBox(this)">
+                            <h5>Non-Housing Loans</h5>
+                            <p>Loans against property, balance transfer, and more.</p>
+                        </div>
+                        <div class="loan-box" onclick="selectBox(this)">
+                            <h5>Home Loan for Needs</h5>
+                            <p>Loans that fit your life, needs, and ambitions.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 2 -->
+                <div class="carousel-item">
+                    <div class="d-flex justify-content-center flex-wrap">
+                        <div class="loan-box" onclick="selectBox(this)">
+                            <h5>Corporate Offerings</h5>
+                            <p>Financial solutions for professionals and businesses.</p>
+                        </div>
+                        <div class="loan-box" onclick="selectBox(this)">
+                            <h5>Property Loans</h5>
+                            <p>Loan against commercial or residential property.</p>
+                        </div>
+                        <div class="loan-box" onclick="selectBox(this)">
+                            <h5>Balance Transfer</h5>
+                            <p>Transfer your existing home loan for better interest rates.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Carousel controls -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#loanCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon bg-dark rounded-circle p-3"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#loanCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon bg-dark rounded-circle p-3"></span>
+            </button>
+        </div>
+    </div>
+</section>
+<!----><!---- Loan Services Section ===== -->
+<section class="loan-services py-5">
+    <div class="container">
+        <h2 class="text-center mb-5 fw-bold text-primary">Let us help you find a loan</h2>
+
+        <div class="row justify-content-center g-4">
+
+            <!-- Box 1 -->
+            <div class="col-md-4">
+                <div class="service-box" tabindex="0" data-bg="/images/homeloans.jpg" style="--bg-img: url('/images/homeloans.jpg')">
+                    <div class="content">
+                        <div class="icon mb-3 text-center">
+                            <i class="bi bi-house-door-fill text-primary fs-2"></i>
+                        </div>
+                        <h5 class="text-center">Housing Loan</h5>
+                        <p>
+                            We provide home loans to individuals for purchasing, constructing, or renovating their dream homes
+                            with affordable EMIs and flexible tenure options. Our team ensures quick processing and transparent approval.
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Box 2 -->
+            <div class="col-md-4">
+                <div class="service-box" tabindex="0" data-bg="/images/homeloans.jpg" style="--bg-img: url('/images/homeloans.jpg')">
+                    <div class="content">
+                        <div class="icon mb-3 text-center">
+                            <i class="bi bi-building text-primary fs-2"></i>
+                        </div>
+                        <h5 class="text-center">Loan Against Property</h5>
+                        <p>
+                            Avail secured loans against residential or commercial property
+                            for business or personal needs, up to 60% of the property's value.
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Box 3 -->
+            <div class="col-md-4">
+                <div class="service-box" tabindex="0" data-bg="/images/homeloan.jpg" style="--bg-img: url('/images/homeloan.jpg')">
+                    <div class="content">
+                        <div class="icon mb-3 text-center">
+                            <i class="bi bi-brush-fill text-primary fs-2"></i>
+                        </div>
+                        <h5 class="text-center">Home Improvement Loan</h5>
+                        <p>
+                            Upgrade your home interiors or exteriors with easy home improvement loans at
+                            competitive interest rates and minimal documentation. Make your home more beautiful and functional.
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+
+<!--commitment code-->
+<div class="commitment-section">
+    <h3>Our Commitment to You</h3>
+    <p>
+        At EasyHome Loans, we are committed to making your home-buying journey seamless and stress-free.
+        Our mission is to guide you every step of the way — from loan selection to disbursement —
+        ensuring that you receive the best financial support with integrity and trust.
+    </p>
+</div>
+<!-- Add this block where you want the three-step feature row (suggest: right after the loan-slider-section and before .loan-services) -->
+<section class="how-it-works-section py-5">
+    <div class="container text-center align-items-center justify-content-between>
+        <h2 class="fw-bold display-6 text-primary mb-5" style="font-size:3rem; line-height:1.05;">
+            Discover how we help you get<br />your dream home
+        </h2>
+
+        <div class="row align-items-start process-row gx-5">
+            <div class="col-md-4 mb-4">
+                <div class="feature-box p-4 h-100">
+                    <div class="icon-square mx-auto mb-4">
+                        <i class="bi bi-person-check-fill icon-lg"></i>
+                    </div>
+                    <h5 class="feature-title fw-bold">Eligibility Check</h5>
+                    <p class="text-muted mt-2">
+                        We start by assessing your eligibility for a home loan, making sure that you meet all the necessary criteria to make your dream a reality.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="feature-box p-4 h-100">
+                    <div class="icon-square mx-auto mb-4">
+                        <i class="bi bi-file-earmark-text-fill icon-lg"></i>
+                    </div>
+                    <h5 class="feature-title fw-bold">Documentation</h5>
+                    <p class="text-muted mt-2">
+                        Our team guides you through the documentation process, ensuring that all required documents are correctly filled and submitted on time.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="feature-box p-4 h-100">
+                    <div class="icon-square mx-auto mb-4">
+                        <i class="bi bi-hand-thumbs-up-fill icon-lg"></i>
+                    </div>
+                    <h5 class="feature-title fw-bold">Loan Approval</h5>
+                    <p class="text-muted mt-2">
+                        We work with our network of banking partners to secure the best loan approval for you, with competitive interest rates and terms that suit your needs.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<style>
+    .hero-section {
+        position: relative;
+        height: 90vh;
+        background-size: cover;
+        background-position: center;
+    }
+
+        .hero-section .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+
+    /*  #miniCalc {
+            max-width: 600px;
+            margin: 1px ;
+            padding: 1px;
+            border-radius: 12px;
+        }  */
+
+    input[type=range] {
+        width: 100%;
+    }
+
+    .about-section {
+        background: linear-gradient(to bottom right, #f8fbff, #e8f0ff);
+        min-height: 100vh;
+    }
+
+        .about-section img {
+            border-radius: 20px;
+            transition: transform 0.3s ease;
+        }
+
+            .about-section img:hover {
+                transform: scale(1.03);
+            }
+
+    /* .mission-section {
+            background: #f0f7ff;
+            border-left: 5px solid #0078ff;
+        } */
+
+    .query-form {
+        background: #ffffff;
+    }
+
+    .commitment-section {
+        background: linear-gradient(90deg, #003366, #00509e);
+        color: #fff;
+        border-radius: 12px;
+        padding: 30px;
+        text-align: center;
+        margin: auto;
+        margin-left: 20px;
+        margin-right: 20px;
+        margin-bottom: 50px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+        .commitment-section h3 {
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .commitment-section p {
+            font-size: 1rem;
+            color: #e9f1ff;
+            line-height: 1.7;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+    .info-boxes {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 10px;
+        margin-bottom: 30px;
+    }
+
+    .info-card {
+        background: linear-gradient(145deg, #f8fbff, #e9f1ff);
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        border-left: 5px solid #0d6efd;
+    }
+
+        .info-card:hover {
+            background: #e3edff;
+            transform: translateY(-3px);
+        }
+
+        .info-card h4 {
+            color: #003366;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .info-card p, .info-card ul {
+            color: #444;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .info-card ul {
+            list-style: disc;
+            padding-left: 20px;
+        }
+
+    /* Sliding animation for hero text (slide up from bottom on page open) */
+    .fade-in h1,
+    .fade-in p,
+    .fade-in a {
+        transform: translateY(30px);
+        opacity: 0;
+        animation: slideUp 600ms cubic-bezier(.2,.8,.2,1) forwards;
+        will-change: transform, opacity;
+    }
+
+    .fade-in h1 {
+        animation-delay: 200ms;
+    }
+
+    .fade-in p {
+        animation-delay: 350ms;
+    }
+
+    .fade-in a {
+        animation-delay: 500ms;
+    }
+
+    @@keyframes slideUp {
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .loan-slider-section {
+        /* match hero's deep-blue feel + a warm accent gradient */
+        background: linear-gradient(180deg, rgba(3,37,65,0.95) 0%, rgba(13,110,253,0.9) 100%);
+        color: #ffffff;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .loan-slider-section .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .loan-slider-section h2 {
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.45);
+        }
+
+        .loan-slider-section p {
+            color: rgba(255,255,255,0.85);
+        }
+
+    .loan-box {
+        background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+        border-radius: 14px;
+        padding: 30px 25px;
+        margin: 10px;
+        width: 300px;
+        cursor: pointer;
+        transition: transform 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+        box-shadow: 0 6px 18px rgba(2,6,23,0.35);
+        border: 1px solid rgba(255,255,255,0.08);
+        color: #fff;
+        backdrop-filter: blur(4px);
+    }
+
+        .loan-box h5 {
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .loan-box p {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.85);
+        }
+
+        .loan-box:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 14px 36px rgba(13,110,253,0.25);
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+            border-color: rgba(13,110,253,0.4);
+        }
+
+        .loan-box.selected {
+            background: linear-gradient(135deg, rgba(255,193,7,0.12), rgba(13,110,253,0.14));
+            border: 1px solid rgba(255,193,7,0.9);
+            box-shadow: 0 18px 48px rgba(13,110,253,0.28), 0 6px 18px rgba(255,193,7,0.12);
+            transform: translateY(-10px) scale(1.03);
+        }
+
+    /* controls: make circular with subtle glass effect */
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 48px;
+        height: 48px;
+        top: 50%;
+        transform: translateY(-50%);
+        border-radius: 50%;
+        background: rgba(255,255,255,0.09);
+        border: 1px solid rgba(255,255,255,0.06);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        filter: invert(1) hue-rotate(190deg) saturate(0.8) brightness(1.1);
+        background-size: 60%;
+    }
+
+    /* small tweaks for mobile */
+    @@media (max-width: 768px) {
+        .loan-box {
+            width: calc(100% - 30px);
+            margin: 12px 8px;
+        }
+
+        .carousel-control-prev,
+        .carousel-control-next {
+            display: none; /* simpler controls on mobile */
+        }
+    }
+
+    /* keep other existing styles intact below */
+    .loan-services {
+        background-color: #f8f9fa;
+    }
+
+    .service-box {
+        position: relative;
+        background: #fff;
+        border-radius: 15px;
+        padding: 30px 25px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition: all 0.4s ease;
+        overflow: hidden;
+        height: 100%;
+        /* prepare custom property fallback */
+        --bg-img: none;
+        --hover-opacity: 0.45;
+    }
+
+        .service-box:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Hidden background image layer, uses CSS variable set by JS or inline style */
+        .service-box::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: var(--bg-img);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 0.45s ease, transform 0.45s ease, filter 0.45s ease;
+            z-index: 0;
+            transform: scale(1);
+            filter: brightness(0.7);
+            pointer-events: none;
+        }
+
+        /* Show background image on hover or keyboard focus (pop effect) */
+        .service-box:hover::before,
+        .service-box:focus-within::before,
+        .service-box:focus::before,
+        .service-box.bg-visible::before {
+            opacity: var(--hover-opacity);
+            transform: scale(1.06);
+            filter: brightness(0.6);
+        }
+
+        .service-box .content {
+            position: relative;
+            z-index: 2;
+            color: #000;
+            transition: color 0.3s ease;
+        }
+
+        /* increase contrast when background is visible */
+        .service-box:hover .content,
+        .service-box:focus .content,
+        .service-box.bg-visible .content {
+            color: #fff;
+        }
+
+        .service-box h5 {
+            font-weight: 600;
+            color: #003366;
+            margin-bottom: 10px;
+        }
+
+        .service-box p {
+            color: darkslategrey;
+            font-size: 0.96rem;
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        .service-box .read-more {
+            font-weight: 500;
+            color: #0d6efd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+            .service-box .read-more:hover {
+                color: #084298;
+            }
+
+    h2 {
+        letter-spacing: 0.5px;
+    }
+
+    .about-stats-section .small {
+        letter-spacing: .6px;
+    }
+
+    .about-stats-section h2 {
+        color: #263a6b;
+        font-family: Georgia, 'Times New Roman', serif;
+    }
+
+    .about-stats-section p {
+        font-size: 1rem;
+    }
+
+    .stat-percent {
+        font-size: 3.75rem;
+        line-height: 1;
+        font-weight: 800;
+        color: #243b70;
+        min-width: 110px;
+        text-align: left;
+    }
+
+        .stat-percent .small {
+            font-size: .6em;
+            margin-left: .15rem;
+        }
+
+    }
+    /* How it works / three-step section */
+    .how-it-works-section {
+        background: rgba(250,250,252,0.9);
+        position: relative;
+    }
+
+        /* subtle soft pattern behind boxes (keeps it light like the reference) */
+        .how-it-works-section::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(0,0,0,0.02) 1px, transparent 1px);
+            background-size: 140px 140px;
+            opacity: 0.04;
+            pointer-events: none;
+        }
+
+    .process-row {
+        position: relative;
+        z-index: 2;
+    }
+
+    .feature-box {
+        background: transparent;
+        border-radius: 6px;
+        text-align: center;
+    }
+
+    .icon-square {
+        width: 160px;
+        height: 160px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #ffffff;
+        border: 1px solid #ececec;
+        border-radius: 6px;
+        box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+    }
+
+    .icon-lg {
+        font-size: 56px;
+        color: #ff6a00; /* orange icon color */
+        line-height: 1;
+    }
+
+    .feature-title {
+        color: #243b70;
+        margin-top: 8px;
+        margin-bottom: 0.5rem;
+        font-family: Georgia, 'Times New Roman', serif;
+    }
+
+    .how-it-works-section p {
+        color: #6c757d;
+        font-size: 0.98rem;
+        line-height: 1.7;
+        max-width: 42rem;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* responsive adjustments */
+    @@media (max-width: 767.98px) {
+        .icon-square
+
+    {
+        width: 120px;
+        height: 120px;
+    }
+
+    .icon-lg {
+        font-size: 44px;
+    }
+
+    .how-it-works-section h2 {
+        font-size: 1.8rem;
+    }
+
+    }
+
+</style>
+
+
+@section Scripts {
+    <script>
+        document.getElementById('queryForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = document.getElementById('queryName').value;
+            const email = document.getElementById('queryEmail').value;
+            const message = document.getElementById('queryMessage').value;
+
+            if (name && email && message) {
+                document.getElementById('queryResponse').textContent = "✅ Thank you, " + name + "! Your query has been submitted successfully.";
+                this.reset();
+            } else {
+                document.getElementById('queryResponse').textContent = "⚠️ Please fill in all fields.";
+            }
+        });
+
+        function computeEMI(P, r, y){
+          var rate = r/100/12, n = y*12;
+          var emi = (P*rate*Math.pow(1+rate,n)) / (Math.pow(1+rate,n)-1);
+          return emi.toFixed(2);
+        }
+        const amt=document.getElementById("amtRange"), yrs=document.getElementById("yrsRange"), rate=document.getElementById("rateRange");
+        function refresh(){
+          const emi = computeEMI(+amt.value,+rate.value,+yrs.value);
+          document.getElementById("amtLabel").innerText=Number(amt.value).toLocaleString();
+          document.getElementById("yrsLabel").innerText=yrs.value;
+          document.getElementById("rateLabel").innerText=rate.value;
+          document.getElementById("emiVal").innerText=Number(emi).toLocaleString();
+        }
+        [amt,yrs,rate].forEach(r=>r.addEventListener('input',refresh));
+        refresh();
+            document.addEventListener('DOMContentLoaded', function () {
+            // Highlight selected box (loan boxes)
+            window.selectBox = function(element) {
+                document.querySelectorAll('.loan-box').forEach(box => box.classList.remove('selected'));
+                element.classList.add('selected');
+            };
+
+            // Safe carousel init (only if bootstrap and element present)
+            try {
+                var myCarousel = document.querySelector('#loanCarousel');
+                if (window.bootstrap && myCarousel) {
+                    new bootstrap.Carousel(myCarousel, {
+                        interval: false,  // disable auto move
+                        ride: false,
+                        pause: true,
+                        wrap: true
+                    });
+                }
+            } catch (e) {
+                console.warn('Carousel init failed:', e);
+            }
+
+            // Prepare service-box backgrounds immediately and enable keyboard accessibility
+            document.querySelectorAll('.service-box').forEach(box => {
+                const bg = box.getAttribute('data-bg');
+                if (bg) {
+                    // Set CSS variable so ::before uses the image immediately (no click required)
+                    // If inline style already set, this will overwrite it with the same value — safe.
+                    box.style.setProperty('--bg-img', `url("${bg}")`);
+                    // optional hover opacity can be customized per-box via data attribute if desired
+                    if (box.hasAttribute('data-hover-opacity')) {
+                        box.style.setProperty('--hover-opacity', box.getAttribute('data-hover-opacity'));
+                    }
+                    // Add keyboard handlers so focus shows the background
+                    box.addEventListener('focus', () => box.classList.add('bg-visible'));
+                    box.addEventListener('blur', () => box.classList.remove('bg-visible'));
+                    // For pointer users keep the same class management
+                    box.addEventListener('mouseenter', () => box.classList.add('bg-visible'));
+                    box.addEventListener('mouseleave', () => box.classList.remove('bg-visible'));
+                }
+            });
+        });
+            (function () {
+            // animate stat fills when section becomes visible
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.querySelectorAll('.stat-fill').forEach(el => {
+                        const pct = parseInt(el.getAttribute('data-percent') || '0', 10);
+                        // progressive fill animation
+                        requestAnimationFrame(() => el.style.width = pct + '%');
+                        // set aria value
+                        const bar = el.closest('.stat-bar');
+                        if (bar) bar.setAttribute('aria-valuenow', pct);
+                    });
+                    observer.unobserve(entry.target);
+                });
+            }, { threshold: 0.25 });
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const section = document.querySelector('.about-stats-section');
+                if (section) observer.observe(section);
+            });
+        })();
+    </script>
+}
+<!-- ===== Bootstrap Icons ===== -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">

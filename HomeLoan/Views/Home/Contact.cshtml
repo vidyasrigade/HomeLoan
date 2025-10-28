@@ -1,0 +1,158 @@
+﻿@{
+    ViewData["Title"] = "Contact Us";
+}
+<!-- ensure page content starts below navbar -->
+<div class="contact-page pt-5" style="padding-top:80px; min-height:100vh; background:linear-gradient(135deg,#e0e7ff 0%,#a8d1ff 40%,#004aad 100%);">
+    <div class="container py-4">
+        <!-- TOP: three boxes full-width under navbar -->
+        <div class="row g-4 mb-4">
+            <div class="col-12">
+                <h4 class="text-center text-primary mb-3"><strong>CALL, EMAIL OR COME SAY HELLO TO OUR EXPERTS</strong></h4>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="card h-100 text-center p-4 contact-box">
+                    <div class="icon mb-3">📞</div>
+                    <h5 class="mb-1">Call us</h5>
+                    <p class="mb-0">+91 98765 43210</p>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="card h-100 text-center p-4 contact-box">
+                    <div class="icon mb-3">✉️</div>
+                    <h5 class="mb-1">Email</h5>
+                    <p class="mb-0">support@easyhome.com</p>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="card h-100 text-center p-4 contact-box">
+                    <div class="icon mb-3">🏢</div>
+                    <h5 class="mb-1">Head Office</h5>
+                    <p class="mb-0">EasyHome Loans Pvt. Ltd.<br />Hyderabad, Telangana, India</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- BELOW: contact form and map side-by-side -->
+        <div class="row g-4">
+            <div class="col-12 col-lg-6">
+                <div class="card p-4 shadow-sm">
+                    <h3 class="text-primary mb-3">Contact Us</h3>
+
+                    @if (TempData["Msg"] != null)
+                    {
+                        <div class="alert alert-success">@TempData["Msg"]</div>
+                    }
+
+                    <form asp-action="Contact" method="post" novalidate>
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label class="form-label form-label-shadow">Name</label>
+                            <input name="name" class="form-control input-shadow" required />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="name" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label form-label-shadow">Email</label>
+                            <input name="email" type="email" class="form-control input-shadow" required />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="email" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label form-label-shadow">Address</label>
+                            <textarea name="address" class="form-control input-shadow" rows="2" placeholder="Your city / area (optional)"></textarea>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="address" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label form-label-shadow">Message</label>
+                            <textarea name="message" class="form-control input-shadow" required></textarea>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="message" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="text-end">
+                            <button class="btn btn-primary" type="submit">Send</button>
+                        </div>
+                    </form>
+
+                    <partial name="_ValidationScriptsPartial" />
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="card shadow-sm" style="overflow:hidden;">
+                    <div style="width:100%;height:420px">
+                        <!-- Hyderabad embed (works without API key) -->
+                        <iframe width="100%"
+                                height="100%"
+                                frameborder="0"
+                                style="border:0"
+                                src="https://www.google.com/maps?q=17.385044,78.486671&z=13&output=embed"
+                                allowfullscreen
+                                referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+
+                    <div class="card-body">
+                        <h6 class="mb-1">Office</h6>
+                        <p class="mb-0">EasyHome Loans Pvt. Ltd.<br />Hyderabad, Telangana, India<br />📞 +91 98765 43210<br />📧 support@easyhome.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* page-specific styles */
+    .contact-page .card {
+        border-radius: 12px;
+    }
+
+    .contact-box .icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        margin: 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #004aad;
+        color: #ffffff;
+        font-size: 26px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    }
+
+    .input-shadow {
+        box-shadow: 0 0 8px rgba(0,0,0,0.12);
+        border: 1px solid #ced4da;
+        transition: box-shadow .15s, border-color .15s;
+    }
+
+        .input-shadow:focus {
+            border-color: #004aad;
+            box-shadow: 0 0 10px rgba(0,74,173,0.12);
+        }
+
+    /* validation message sizing */
+    form span[data-valmsg-for], form .text-danger {
+        font-size: 0.8rem !important;
+        line-height: 1.2 !important;
+        margin-top: 0.15rem !important;
+    }
+
+    /* keep top spacing under navbar; adjust if navbar height differs */
+    @@media (max-width:991.98px) {
+        .contact-page
+
+    {
+        padding-top: 70px;
+    }
+
+    .card > div[style] {
+        height: 280px !important;
+    }
+    /* map smaller on phones */
+    }</style>
